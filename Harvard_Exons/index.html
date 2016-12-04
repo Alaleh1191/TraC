@@ -20,65 +20,54 @@
 
 		<script src="https://d3js.org/d3.v3.min.js"></script>
 		<script type="text/javascript">
-			var width = 2000,
-	   			height = 200;
+			var width = 960,
+	   			height = 500;
 
-
+	   		
+	   		var genesU = [["10001", 71049937, 71067407, [[71051533, 71051660], [71059596, 71059726], [71067332, 71067407], [71059596, 71059705], [71049937, 71050847], [71063327, 71063419], [71060012, 71060095], [71049937, 71051660], [71064334, 71064494], [71057982, 71058098], [71052472, 71052500]]]];
 
 			var genes = 
 			[
-				["1", 58858171, 58864865, 
-					[[58858171, 58858395], [58861735, 58862017], [58864293, 58864563], [58862756, 58863053], [58863648, 58863921], [58864657, 58864693], [58858718, 58859006], [58864769, 58864865]]
+				["10001", 71049937, 71067407, 
+					[71049937,71052472,71057982,71059596,71060012,71063327,71064334,71067332], [71051660,71052500,71058098,71059726,71060095,71063419,71064494,71067407]
 					], 
 
-				["10", 18248754, 18258723, 
-					[[18248754, 18248855], [18257507, 18258723]]
+				["10001", 71049937, 71067407, 
+					[71049937,71052472,71059596,71060012,71063327,71064334,71067332], [71051660,71052500,71059705,71060095,71063419,71064494,71067407]
 					],
-				["100", 43248159, 43280399,[[43254209, 43254325], [43255096, 43255240], [43248159, 43248488], [43251647, 43251719], [43252842, 43252970], [43251228, 43251293], [43264867, 43264929], [43249658, 43249788], [43280215, 43280399], [43251469, 43251571], [43248939, 43249042], [43257687, 43257810]]],
-				["1000", 25530926, 25757410, [[25593646, 25593873], [25543320, 25543485], [25572618, 25572804], [25565491, 25565725], [25564963, 25565197], [25756926, 25757410], [25582960, 25583133], [25562907, 25563047], [25573463, 25573601], [25530926, 25532323], [25570060, 25570314], [25568487, 25568630], [25585812, 25585957], [25727636, 25727748], [25591809, 25591956], [25589680, 25589836]]],
-				//["10000", 243651534, 244006886, [[244006845, 244006886], [244006426, 244006584], [243716030, 243716245], [243727021, 243727150], [243778397, 243778463], [243708811, 243708899], [243736227, 243736350], [243675625, 243675728], [243776972, 243777041], [243663038, 243663088], [243809194, 243809339], [243800912, 243801044], [243663020, 243663088], [243858892, 243859018], [243663020, 243668636], [243651534, 243651752], [243828073, 243828185]]],
-				["100009613", 69918539, 69921454, [[69921041, 69921312], [69921427, 69921454], [69918539, 69919045]]],
-				["10001", 71049937, 71067407, [[71051533, 71051660], [71059596, 71059726], [71067332, 71067407], [71059596, 71059705], [71049937, 71050847], [71063327, 71063419], [71060012, 71060095], [71049937, 71051660], [71064334, 71064494], [71057982, 71058098], [71052472, 71052500]]]
 
+				["10001", 71049937, 71067407, [71049937,71051533,71052472,71057982,71059596,71060012,71063327,71064334,71067332], [71050847,71051660,71052500,71058098,71059705,71060095,71063419,71064494,71067407]],
+				["10001", 71049937, 71067407, [71049937,71052472,71057982,71059596,71060012,71063327,71064334,71067332], [71051660,71052500,71058098,71059705,71060095,71063419,71064494,71067407]],
+				//["10001", 25071759, 25170815, [25071759,25124232,25140584,25153500,25166350,25167263], [25072116,25124342,25140710,25153607,25166532,25170815]]
 			];
+			
 
 
-
-			//var range = genes[0][2] - genes[1][1];//set to where the min start pos of gene and max end pos of gene transcript
-			//var start = genes[1][1];
-			arrays = [[1, 2], [20, 3]]
-			console.log(d3.max(arrays))
+			//var range = genes[4][2] - genes[0][1];//set to where the min start pos of gene and max end pos of gene transcript
+			//var start = genes[0][1];
 			var xScale = d3.scale.linear()
-                         //.domain([d3.min(genes[i][1], function(array) {
-							//  		return d3.min(array);
-							//		})
-                         //,d3.max(genes[i][2], function(array) {
-							//  		return d3.min(array);
-							//		})
-                         //])
-                         .domain([genes[1][1], genes[5][2]])
-                         .range([0,1200]);
+                         .domain([genes[0][1],genes[0][2]])
+                         .range([0,800]);
 
 
-             var zoom = d3.behavior.zoom()
+             
+
+			 var zoom = d3.behavior.zoom()
 			    .x(xScale)
 			    //.y(y)
 			    //.scaleExtent([1, 50])
 			    .on("zoom", zoomed);
 
 
-	   		var svg = d3.select("body").append("svg")
+			var svg = d3.select("body").append("svg")
 			    .attr("width", width)
 			    .attr("height", height)
-			    .style("margin-top","50px")
 			  	.append("g")
-
-			   // .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
-			   .call(zoom)
+			    //.call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
+			    .call(zoom)
 			  	.append("g");
 
-			  	
-			    var xAxis = d3.svg.axis()
+			var xAxis = d3.svg.axis()
 			    .scale(xScale)
 			    .orient("bottom")
 			    .tickSize(-height);
@@ -89,22 +78,61 @@
 			    .call(xAxis);
 
 
-			
-
 		     svg.append("rect")
 			    .attr("class", "overlay")
 			    .attr("width", width)
-			    .attr("height", height);
-
+			    .attr("height", height)
 
 			for(var i = 0; i < genes.length; i++){
 
 				//console.log(xScale(genes[i][1]), range, start);
 				svg.append("line")
                     .attr("x1", xScale(genes[i][1]))
-                    .attr("y1", 12)
+                    .attr("y1", 12+i*10)
                     .attr("x2", xScale(genes[i][2]))
-                    .attr("y2", 12)
+                    .attr("y2", 12+i*10)
+                    .attr("stroke-width", 1)
+					.attr("stroke", "#3498db");
+
+				for(var j = 0; j<genes[i][3].length; j++){
+					svg.append("rect")
+                    .attr("x", xScale(genes[i][3][j]))
+                    .attr("y", 9+i*10)
+                    .attr("width", xScale(genes[i][4][j]) - xScale(genes[i][3][j]))
+                    .attr("height", 6)
+                    .style("fill", "red");
+                }	
+                var end = d3.max(genes[i][4])
+
+				var start = d3.min(genes[i][3])
+
+                svg.append("rect")
+                    .attr("x", xScale(end))
+                    .attr("y", 11+i*10)
+                    .attr("width", xScale(genes[i][2]) - xScale(end))
+                    .attr("height", 2)
+                    .style("fill", "green");
+
+                svg.append("rect")
+                    .attr("x", xScale(genes[i][1]))
+                    .attr("y", 11+i*10)
+                    .attr("width", xScale(start) - xScale(genes[i][1]))
+                    .attr("height", 2)
+                    .style("fill", "green");
+
+
+				
+			}
+
+
+			for(var i = 0; i < genesU.length; i++){
+
+				//console.log(xScale(genes[i][1]), range, start);
+				svg.append("line")
+                    .attr("x1", xScale(genesU[i][1]))
+                    .attr("y1", 12+5*10)
+                    .attr("x2", xScale(genesU[i][2]))
+                    .attr("y2", 12+5*10)
                     .attr("stroke-width", 2)
 					.attr("stroke", "#3498db");
 
@@ -114,32 +142,32 @@
 					.attr("text-anchor", "start")
 					.text(genes[i][0]);*/
 
-				for(var j = 0; j<genes[i][3].length; j++){
+				for(var j = 0; j<genesU[i][3].length; j++){
 					svg.append("rect")
-                    .attr("x", xScale(genes[i][3][j][0]))
-                    .attr("y", 6)
-                    .attr("width", xScale(genes[i][3][j][1]) - xScale(genes[i][3][j][0]))
+                    .attr("x", xScale(genesU[i][3][j][0]))
+                    .attr("y", 6+5*10)
+                    .attr("width", xScale(genesU[i][3][j][1]) - xScale(genesU[i][3][j][0]))
                     .attr("height", 12)
                     .style("fill", "red");
                 }	
-                var end = d3.max(genes[i][3], function(array) {
+                var end = d3.max(genesU[i][3], function(array) {
 				  return d3.max(array);
 				});
 
-				var start = d3.min(genes[i][3], function(array) {
+				var start = d3.min(genesU[i][3], function(array) {
 				  return d3.min(array);
 				});
                 svg.append("rect")
                     .attr("x", xScale(end))
-                    .attr("y", 9)
-                    .attr("width", xScale(genes[i][2]) - xScale(end))
+                    .attr("y", 9+5*10)
+                    .attr("width", xScale(genesU[i][2]) - xScale(end))
                     .attr("height", 6)
                     .style("fill", "green");
 
                 svg.append("rect")
-                    .attr("x", xScale(genes[i][1]))
-                    .attr("y", 9)
-                    .attr("width", xScale(start) - xScale(genes[i][1]))
+                    .attr("x", xScale(genesU[i][1]))
+                    .attr("y", 9+5*10)
+                    .attr("width", xScale(start) - xScale(genesU[i][1]))
                     .attr("height", 6)
                     .style("fill", "green");
 
@@ -149,7 +177,12 @@
 			}
 
 
-			function zoomed() {
+
+			//function zoom() {
+			  //svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+			//}
+			
+function zoomed() {
 			  //svg.select(".x.axis").call(xAxis);
 			  console.log(d3.event.translate);
 			  translate = [d3.event.translate[0], 0];
@@ -158,12 +191,6 @@
 			  svg.attr("transform", "translate(" + translate + ")scale(" + d3.event.scale + ", 1)");
 			 // svg.select(".y.axis").call(yAxis);
 			}
-			
-
-
-			//function zoom() {
-			  //svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-			//}
 
 			
 
