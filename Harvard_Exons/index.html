@@ -15,7 +15,7 @@
 }
 		</style>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	</head>
 	<body>
 
@@ -40,19 +40,11 @@
 			    .x(xScale)
 			    .on("zoom", zoomed);
 
-			//var nominal_text_size = 10;
-			//var max_text_size = 24;
-			/*var textsvg = d3.select("body").append("svg")
-				.attr("width", width)
-				.style("position", "absolute")
-				.attr("height", height);
-*/
 
 			var svg = d3.select("body").append("svg")
 				.attr("class" , "svg")
 			    .attr("width", width)
 			    .attr("height", height)
-			    //.style("position", "absolute")
 			  	.append("g")
 			    .call(zoom)
 			  	.append("g")
@@ -91,14 +83,13 @@
                     .attr("stroke-width", 2)
 					.attr("stroke", "#3498db");
 
-				/*var text = */d3.select(".svg").append("text")
-					.attr("class", "vals")//xScale(dataAgg.values[i].union.endx) - xScale(dataAgg.values[i].union.startx)
+				d3.select(".svg").append("text")
+					.attr("class", "vals")
 					.attr("x", xScale(dataAgg.values[i].union.endx) - xScale(dataAgg.values[i].union.startx))
 	                .attr("y", yloc+4)
 	                .text(dataAgg.values[i].name)
 	                .attr("font-family", "sans-serif")
 	                .style("font-size", "10px");
-		           // .attr("fill", "red");
 
 		           numtext++;
 
@@ -139,16 +130,16 @@
 				for(var j = 0; j < dataAgg.values[i].transcripts.length; j++){
 					console.log(dataAgg.values[i].transcripts[j]);
 					svg.append("line")
-	                    .attr("x1", 0)
+	                    .attr("x1", xScale(dataAgg.values[i].transcripts[j].startx) - xScale(dataAgg.values[i].union.startx))
 	                    .attr("y1", yloc)
-	                    .attr("x2", xScale(dataAgg.values[i].transcripts[j].endx) - xScale(dataAgg.values[i].transcripts[j].startx))
+	                    .attr("x2", xScale(dataAgg.values[i].transcripts[j].endx) - xScale(dataAgg.values[i].union.startx))
 	                    .attr("y2", yloc)
 	                    .attr("stroke-width", 1)
 						.attr("stroke", "#3498db");
 
 					d3.select(".svg").append("text")
 						.attr("class", "vals")//xScale(dataAgg.values[i].union.endx) - xScale(dataAgg.values[i].union.startx)
-						.attr("x", xScale(dataAgg.values[i].transcripts[j].endx) - xScale(dataAgg.values[i].transcripts[j].startx))
+						.attr("x", xScale(dataAgg.values[i].transcripts[j].endx) - xScale(dataAgg.values[i].union.startx))
 		                .attr("y", yloc+4)
 		                .text(dataAgg.values[i].transcripts[j].name)
 		                .attr("font-family", "sans-serif")
@@ -158,7 +149,7 @@
 
 					for(var k = 0; k<dataAgg.values[i].transcripts[j].exonStart.length; k++){
 						svg.append("rect")
-		                    .attr("x", xScale(dataAgg.values[i].transcripts[j].exonStart[k]) - xScale(dataAgg.values[i].transcripts[j].startx))
+		                    .attr("x", xScale(dataAgg.values[i].transcripts[j].exonStart[k]) - xScale(dataAgg.values[i].union.startx))
 		                    .attr("y", yex)
 		                    .attr("width", xScale(dataAgg.values[i].transcripts[j].exonEnd[k]) - xScale(dataAgg.values[i].transcripts[j].exonStart[k]))
 		                    .attr("height", 6)
@@ -168,14 +159,14 @@
 					var start = d3.min(dataAgg.values[i].transcripts[j].exonStart)
 
 					svg.append("rect")
-	                    .attr("x", xScale(end) - xScale(dataAgg.values[i].transcripts[j].startx))
+	                    .attr("x", xScale(end) - xScale(dataAgg.values[i].union.startx))
 	                    .attr("y", yend)
 	                    .attr("width", xScale(dataAgg.values[i].transcripts[j].endx) - xScale(end))
 	                    .attr("height", 2)
 	                    .style("fill", "green");
 
                 	svg.append("rect")
-	                    .attr("x", 0)
+	                    .attr("x", xScale(dataAgg.values[i].transcripts[j].startx) - xScale(dataAgg.values[i].union.startx))
 	                    .attr("y", yend)
 	                    .attr("width", xScale(start) - xScale(dataAgg.values[i].transcripts[j].startx))
 	                    .attr("height", 2)
@@ -198,11 +189,6 @@
 			  
 			  translate = [d3.event.translate[0], 0];
 			  svg.attr("transform", "translate(" + translate + ")scale(" + d3.event.scale + ", 1)");
-			//d3.selectAll(".g:not(.text)").attr("transform", "translate(" + translate + ")scale(" + d3.event.scale + ", 1)");;
-			//translateNew = [-translate[0]/d3.event.scale + translate[0], 0]// translate a tiny bit to cancel the effect
-			//console.log(translateNew);
-			//d3.selectAll(".text").attr("transform", "scale(" + 1/d3.event.scale  + ", 1)");//translate(" + translateNew + ")
-			
 			$(".vals").each(function(i, obj) {
     			
 				if(vals.length < numtext){
@@ -214,13 +200,7 @@
     			//console.log(val);
     			$(this).attr("x", val);
 			});
-			//d3.selectAll("")
-			/*var text_size = nominal_text_size;
-		    if (nominal_text_size*d3.event.scale>max_text_size) text_size = max_text_size/zoom.scale();
-		    d3.selectAll("text").style("font-size",text_size + "px");*/
-
-    		//d3.selectAll("text").style("font-size",(24/d3.event.scale) + "px");
-			 // svg.select(".y.axis").call(yAxis);
+		
 			}
 			
 			})
