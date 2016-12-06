@@ -119,6 +119,8 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
     	.domain(locations)
     	.range(colors);
 	
+
+
 	//Create a group that already holds the data
 	var g = svg.append("g")
 	    .attr("transform", "translate(" + (width/2 + margin.left) + "," + (height/2 + margin.top) + ")")
@@ -239,7 +241,7 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 					return s.outer.innername !== d.name ? fadeOpacity : 1;
 				});
 
-			d3.select("#title").html("Probe: "+ d.name);
+			//d3.select("#title").html("Probe: "+ d.name);
 
 			d3.selectAll(".inner-labels")
 		      	.transition()
@@ -293,6 +295,9 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 				.call(wrap, 2.25*pullOutSize);*/
 				
 		})
+		.on("click", function(d) {
+			d3.select("#title").html("Probe: "+ d.name);
+		})
      	.on("mouseout", function(d) {
 			
      		d3.selectAll(".inner-labels")
@@ -300,7 +305,7 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 		        .style("opacity", 1);
 
 
-		    d3.select("#title").empty();
+		   // d3.select("#title").html(" ");
 
 
 			//Put the string opacity back to normal
