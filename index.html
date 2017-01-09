@@ -75,7 +75,7 @@
 			<script>
 				window.onload = (function() {
 				    var xhr = new XMLHttpRequest();
-				    xhr.open('GET', 'http://rest.ensembl.org/info/species?content-type=application/json');
+				    xhr.open('GET', '//rest.ensembl.org/info/species?content-type=application/json');
 				    xhr.onreadystatechange = (function() {
 				        if(xhr.status == 200 && xhr.readyState == 4)
 						{
@@ -106,7 +106,7 @@
 					console.log('Selected Specie:' + specie + ': Selected Gene: ' + gene);
 
 					var xhr = new XMLHttpRequest();
-					xhr.open('GET', 'http://rest.ensembl.org/lookup/symbol/'+specie+'/'+gene+'?content-type=application/json;expand=1');
+					xhr.open('GET', '//rest.ensembl.org/lookup/symbol/'+specie+'/'+gene+'?content-type=application/json;expand=1');
 					xhr.onreadystatechange = (function() {
 					   if(xhr.status == 200 && xhr.readyState == 4)
 					   {
