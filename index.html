@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+	<head>
+	<style>
+
+		circle {
+		  fill: rgb(31, 119, 180);
+		  fill: rgb(228, 75, 75);
+		  fill-opacity: 1;
+		}
+
+		.leaf circle {
+		  fill: #ff7f0e;
+		  fill-opacity: 1;
+		}
+
+		text {
+		  font: 10px sans-serif;
+		  text-anchor: middle;
+		}
+
+		</style>
+		
+		<!-- Styling -->
+		<link href="style.css" rel="stylesheet">
+		
+		<!-- D3 v4 -->
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		
+		<!-- Custom "chord" and "ribbon" functions -->
+		<script src="loom.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="string.js"></script>
+	</head>
+	<body>
+			<div>
+				<form>
+					<span>Please enter the splice variants:</span><br/>
+					<div id = "SVs">
+						<span class= "1"> 1. </span>
+						
+						<textarea class ="SV 1" style="width: 525px;  height: 20px"></textarea>
+						<img class = "1" onclick="removeSV(1)" src="x-button.png" alt="delete" height="25px"><!--http://tdyln.me/tdyln-0065-x-10-july-2015/ cite this-->
+						<br class = "1"/>
+						<span class = "2"> 2. </span>
+						<textarea class ="SV 2"  style="width: 525px;  height: 20px"></textarea>
+						<img class ="2" onclick="removeSV(2)" src="x-button.png" alt="delete" height="25px">
+						<br class = "2"/>
+					</div>
+					<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' height= "20px"/><br/>
+					<span>Please enter the minimum length of a share sequence: </span>
+					<input type="text" name="minLength" id='minLength'><br/>
+					<input type="button" value="Submit" onclick="makeChordData()" class="btn btn-primary">
+				</form>
+
+				<span>------- OR --------</span>
+				<form>
+					<select id="species"></select>
+					<input type="text" id="gene"/>
+					<input type="button" value="Select Specie and Gene" onclick="searchForGene();"/>
+					<select id="transcripts"></select>
+					<input type="button" value="Select Transcript" onclick="searchForTranscript();"/>
+				</form>
+			</div>
+
+
+			<div  style="width: 525px;white-space: pre-wrap;word-wrap: break-word;"><span id = "results"></span></div>
+			<div id="sv-chart" style="width: 700px; float: left; position: absolute;"></div>
+			<div style="width: 500px; margin-left: 750px; word-wrap: break-word" id="title"> Please click on the probe to get its sequence </div>
+
+			<script src="script2.js"></script>
+			<!--<script src="script2.js"></script>-->
+
+			<script type="text/javascript" src="test.js"></script>
+
+			<script>
+				window.onload = (function() {
+				    var xhr = new XMLHttpRequest();
+				    xhr.open('GET', 'http://rest.ensembl.org/info/species?content-type=application/json');
+				    xhr.onreadystatechange = (function() {
+				        if(xhr.status == 200 && xhr.readyState == 4)
+						{
+							var species = JSON.parse(xhr.responseText);
+							species = species.species;
+							console.log(species);
+
+							var speciesOptions = '';
+							for(var i = 0; i < species.length; i++)
+							{
+								speciesOptions += '<option value="' + species[i].name + '">' + species[i].display_name + '</option>';
+							}
+
+							document.getElementById('species').innerHTML = speciesOptions;
+
+						}
+					});
+					xhr.send();
+				});
+
+				function searchForGene()
+				{
+					var specie = document.getElementById('species');
+					specie = specie.options[specie.selectedIndex].value;
+
+					var gene = document.getElementById('gene').value;
+
+					console.log('Selected Specie:' + specie + ': Selected Gene: ' + gene);
+
+					var xhr = new XMLHttpRequest();
+					xhr.open('GET', 'http://rest.ensembl.org/lookup/symbol/'+specie+'/'+gene+'?content-type=application/json;expand=1');
+					xhr.onreadystatechange = (function() {
+					   if(xhr.status == 200 && xhr.readyState == 4)
+					   {
+							var transcripts = JSON.parse(xhr.responseText);
+							transcripts = transcripts['Transcript'];
+
+							transcriptsOptions = '';
+							for(var i = 0; i < transcripts.length; i++)
+							{
+								transcriptsOptions += '<option value="' + transcripts[i].id + '">' + transcripts[i].id + ' (' + transcripts[i].biotype + ')</option>';
+							}
+
+							document.getElementById('transcripts').innerHTML = transcriptsOptions;
+					   }
+					   else if(xhr.readyState == 4)
+					   {
+					       alert('Supplied Specie and Gene was not found');
+					   }
+					});
+
+					xhr.send(null);
+				}
+
+				function searchForTranscript()
+				{
+					var transcript = document.getElementById('transcripts');
+				}
+
+
+			</script>
+
+
+
+
+			<script type="text/javascript">
+				numberOfSV = 3;
+				function addSV(){
+					$("#SVs").append("<span class='"+numberOfSV+"'> "+numberOfSV+". </span> <textarea class ='SV "+numberOfSV+"'  style='width: 525px;  height: 20px'></textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class="+numberOfSV+" onclick='removeSV("+numberOfSV+")' src='x-button.png' alt='delete' height='25px'> <br class='"+numberOfSV+"'/>")
+					numberOfSV++;
+				}
+
+				function removeSV(sv){
+					var remove = "."+sv
+					$(remove).remove();
+				}
+
+				function makeChordData(){
+					$("#results").empty();
+					$("#sv-chart").empty();
+
+					var spliceVariants= $(".SV").map(function() {
+					   return $(this).val();
+					}).get();
+					
+					var n = spliceVariants.length;
+					//shared among all
+
+					var arrayOfProbes = [];
+
+					if(findProbes(spliceVariants) != null){
+						arrayOfProbes = arrayOfProbes.concat(findProbes(spliceVariants));
+					}
+					
+
+					var chordData = [];
+					if(arrayOfProbes.length != 0){
+						for(var i = 0; i<n; i++){
+							for(var j = 0; j < arrayOfProbes.length; j++){
+								chordData.push({
+									"SpliceVariant": i+1,
+									"probe": arrayOfProbes[j],
+									"size": arrayOfProbes[j].length
+								});
+							}
+						}
+					}
+					
+					console.log(arrayOfProbes);
+					console.log(chordData);
+					//nC(n-1) == nC1 (eliminate 1 splice variants)
+					if(n > 2){
+						var partSpliceVariants = [];
+						for(var i=0; i < n; i++){
+							partSpliceVariants = spliceVariants.slice();
+							partSpliceVariants.splice(i,1);
+							var temp = findProbes(partSpliceVariants);
+							if(temp == null) continue; 
+							for(var k=0; k < temp.length; k++){
+								if(arrayOfProbes.indexOf(temp[k]) == -1){
+									arrayOfProbes.push(temp[k]);
+									console.log("temp found")
+									console.log(temp[k]);
+									for(m=0; m < n; m++){
+										if(m != i){
+											console.log("all but " + i + "have "+temp[k]);
+											chordData.push({
+												"SpliceVariant": m+1,
+												"probe": temp[k],
+												"size": temp[k].length
+											});
+										}
+									}
+									
+								}
+							}
+						}
+					}
+					console.log(chordData.length);
+
+
+					//nC2 == nC(n-2)
+					if(n>3){
+
+						var partSpliceVariants = [];
+						for(var i=0; i < n; i++){
+							for(var j = i+1  ; j<n; j++){
+								partSpliceVariants = spliceVariants.slice();
+								partSpliceVariants.splice(i,1);
+								partSpliceVariants.splice(j-1,1);
+								var temp = findProbes(partSpliceVariants);
+								if(temp == null) continue; 
+								for(var k=0; k < temp.length; k++){
+									if(arrayOfProbes.indexOf(temp[k]) == -1){
+										arrayOfProbes.push(temp[k]);
+										for(m=0; m < n; m++){
+											if(m != i && m != j){
+												chordData.push({
+													"SpliceVariant": m+1,
+													"probe": temp[k],
+													"size": temp[k].length
+												});
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					console.log(chordData);
+
+
+					//nC3 == nC(n-3)
+					if(n>4){
+
+						var partSpliceVariants = [];
+						for(var i=0; i < n; i++){
+							for(var j = i+1; j<n; j++){
+								for(var f = j+1; f < n; f++){
+									partSpliceVariants = spliceVariants.slice();
+									partSpliceVariants.splice(i,1);
+									partSpliceVariants.splice(j-1,1);
+									partSpliceVariants.splice(f-2,1);
+									var temp = findProbes(partSpliceVariants);
+									if(temp == null) continue; 
+									for(var k=0; k < temp.length; k++){
+										if(arrayOfProbes.indexOf(temp[k]) == -1){
+											arrayOfProbes.push(temp[k]);
+											for(m=0; m < n; m++){
+												if(m != i && m != j && m != f){
+													chordData.push({
+														"SpliceVariant": m+1,
+														"probe": temp[k],
+														"size": temp[k].length
+													});
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					console.log(chordData);
+
+					//nC4 == nC(n-4)
+					if(n>5){
+
+						var partSpliceVariants = [];
+						for(var i=0; i < n; i++){
+							for(var j = i+1; j<n; j++){
+								for(var f = j+1; f < n; f++){
+									for(var l = f+1; l < n; l++){
+										partSpliceVariants = spliceVariants.slice();
+										partSpliceVariants.splice(i,1);
+										partSpliceVariants.splice(j-1,1);
+										partSpliceVariants.splice(f-2,1);
+										partSpliceVariants.splice(l-3,1);
+										var temp = findProbes(partSpliceVariants);
+										if(temp == null) continue; 
+										for(var k=0; k < temp.length; k++){
+											if(arrayOfProbes.indexOf(temp[k]) == -1){
+												arrayOfProbes.push(temp[k]);
+												for(m=0; m < n; m++){
+													if(m != i && m != j && m != f && m != l){
+														chordData.push({
+															"SpliceVariant": m+1,
+															"probe": temp[k],
+															"size": temp[k].length
+														});
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					console.log(chordData);
+
+					//nC5 == nC(n-5)
+					if(n>6){
+
+						var partSpliceVariants = [];
+						for(var i=0; i < n; i++){
+							for(var j = i+1; j<n; j++){
+								for(var f = j+1; f < n; f++){
+									for(var l = f+1; l < n; l++){
+										for(var r = l+1; r < n; r++){
+											partSpliceVariants = spliceVariants.slice();
+											partSpliceVariants.splice(i,1);
+											partSpliceVariants.splice(j-1,1);
+											partSpliceVariants.splice(f-2,1);
+											partSpliceVariants.splice(l-3,1);
+											partSpliceVariants.splice(r-4,1);
+											var temp = findProbes(partSpliceVariants);
+											if(temp == null) continue; 
+											for(var k=0; k < temp.length; k++){
+												if(arrayOfProbes.indexOf(temp[k]) == -1){
+													arrayOfProbes.push(temp[k]);
+													for(m=0; m < n; m++){
+														if(m != i && m != j && m != f && m != l && m != r){
+															chordData.push({
+																"SpliceVariant": m+1,
+																"probe": temp[k],
+																"size": temp[k].length
+															});
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					console.log(chordData);
+
+
+
+					//nC6 == nC(n-6)
+					if(n>7){
+						var partSpliceVariants = [];
+						for(var i=0; i < n; i++){
+							for(var j = i+1; j<n; j++){
+								for(var f = j+1; f < n; f++){
+									for(var l = f+1; l < n; l++){
+										for(var r = l+1; r < n; r++){
+											for(var s = r+1; s < n; s++){
+												partSpliceVariants = spliceVariants.slice();
+												partSpliceVariants.splice(i,1);
+												partSpliceVariants.splice(j-1,1);
+												partSpliceVariants.splice(f-2,1);
+												partSpliceVariants.splice(l-3,1);
+												partSpliceVariants.splice(r-4,1);
+												partSpliceVariants.splice(s-5,1);
+												var temp = findProbes(partSpliceVariants);
+												if(temp == null) continue; 
+												for(var k=0; k < temp.length; k++){
+													if(arrayOfProbes.indexOf(temp[k]) == -1){
+														arrayOfProbes.push(temp[k]);
+														for(m=0; m < n; m++){
+															if(m != i && m != j && m != f && m != l && m != r && m != s){
+																chordData.push({
+																	"SpliceVariant": m+1,
+																	"probe": temp[k],
+																	"size": temp[k].length
+																});
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					console.log(chordData);
+
+
+					//nC7 == nC(n-7)
+					if(n>8){
+						var partSpliceVariants = [];
+						for(var i=0; i < n; i++){
+							for(var j = i+1; j<n; j++){
+								for(var f = j+1; f < n; f++){
+									for(var l = f+1; l < n; l++){
+										for(var r = l+1; r < n; r++){
+											for(var s = r+1; s < n; s++){
+												for(var w = s+1; w < n; w++){
+													partSpliceVariants = spliceVariants.slice();
+													partSpliceVariants.splice(i,1);
+													partSpliceVariants.splice(j-1,1);
+													partSpliceVariants.splice(f-2,1);
+													partSpliceVariants.splice(l-3,1);
+													partSpliceVariants.splice(r-4,1);
+													partSpliceVariants.splice(s-5,1);
+													partSpliceVariants.splice(w-6,1);
+													var temp = findProbes(partSpliceVariants);
+													if(temp == null) continue; 
+													for(var k=0; k < temp.length; k++){
+														if(arrayOfProbes.indexOf(temp[k]) == -1){
+															arrayOfProbes.push(temp[k]);
+															for(m=0; m < n; m++){
+																if(m != i && m != j && m != f && m != l && m != r && m != s && m != w){
+																	chordData.push({
+																		"SpliceVariant": m+1,
+																		"probe": temp[k],
+																		"size": temp[k].length
+																	});
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					console.log(chordData);
+
+
+					//nC8 == nC(n-8)
+					if(n>9){
+						var partSpliceVariants = [];
+						for(var i=0; i < n; i++){
+							for(var j = i+1; j<n; j++){
+								for(var f = j+1; f < n; f++){
+									for(var l = f+1; l < n; l++){
+										for(var r = l+1; r < n; r++){
+											for(var s = r+1; s < n; s++){
+												for(var w = s+1; w < n; w++){
+													for(var v = w+1; v < n; v++){
+														partSpliceVariants = spliceVariants.slice();
+														partSpliceVariants.splice(i,1);
+														partSpliceVariants.splice(j-1,1);
+														partSpliceVariants.splice(f-2,1);
+														partSpliceVariants.splice(l-3,1);
+														partSpliceVariants.splice(r-4,1);
+														partSpliceVariants.splice(s-5,1);
+														partSpliceVariants.splice(w-6,1);
+														partSpliceVariants.splice(v-7,1);
+														var temp = findProbes(partSpliceVariants);
+														if(temp == null) continue; 
+														for(var k=0; k < temp.length; k++){
+															if(arrayOfProbes.indexOf(temp[k]) == -1){
+																arrayOfProbes.push(temp[k]);
+																for(m=0; m < n; m++){
+																	if(m != i && m != j && m != f && m != l && m != r && m != s && m != w && m != v){
+																		chordData.push({
+																			"SpliceVariant": m+1,
+																			"probe": temp[k],
+																			"size": temp[k].length
+																		});
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					console.log(chordData);
+
+					//var weightedByLength = [];
+					var temp = [];
+
+					for(var i = 0; i < arrayOfProbes.length; i++){
+						temp.push({
+							"name" : arrayOfProbes[i],
+							"size" : arrayOfProbes[i].length 
+						})
+					}
+					var temp2 = [];
+					temp2.push({
+						"children": temp
+					})
+					/*weightedByLength.push({
+						"children": temp2
+					})*/
+					weightedByLength = {"children": temp2};
+					console.log(weightedByLength);
+					if(chordData.length != 0){
+						drawChord(chordData, weightedByLength);
+					} else {
+						$("#results").html("no SVs of desired min length was found")
+					}
+					
+					//test(weightedByLength);
+				}
+
+
+
+				function findProbes(sv){
+					
+					
+					//return;
+					var spliceVariants = sv;
+					//var spliceVariantsStr = $("#SL").val();
+					//var spliceVariants = spliceVariantsStr.split(","); // can be changed based on the input given by the user
+					//var spliceVariants = spliceVariants;
+					var minLength = Number($("#minLength").val());
+
+					var numVariants = spliceVariants.length;
+					var sharePartnersPerSV = new Array(numVariants);
+					var convergencehx = [1, 0]
+					var numericSpliceVariants= new Array(numVariants);
+
+					for(var i = 0; i < numVariants ; i++){
+						numericSpliceVariants[i] = nucleotidesStrToVector(spliceVariants[i]);
+					}
+					
+					var sharez = [];
+					var sharedSequences = [];
+					var sharedHolder = [];
+					var merged = [];
+
+					while(sharedSequences.length != 1){
+						
+						if(sharedSequences.length == 0){
+
+							for(var i = 0; i < numericSpliceVariants.length - 1; i+=2) {
+
+								sharez =  nucleotideSequenceCompare(numericSpliceVariants[i], numericSpliceVariants[i+1], minLength);
+								merged = [].concat.apply([], sharez);
+								
+								//console.log(merged);
+								if(sharez.length == 0) {
+									//console.log("no match found");
+									//$("#results").html("<p>There are no common probe among all SVs entered</p>");
+									return;
+
+								} else {
+									sharedSequences.push(merged);
+								}
+								
+							}
+
+							if((numericSpliceVariants.length%2) != 0){
+								sharedSequences.push(numericSpliceVariants[numericSpliceVariants.length-1]);
+							}
+
+						} else {
+							sharedHolder = sharedSequences;
+							sharedSequences = [];
+							for(var i = 0; i < sharedHolder.length - 1; i+=2){
+								sharez = nucleotideSequenceCompare(sharedHolder[i], sharedHolder[i+1], minLength);
+								merged = [].concat.apply([], sharez);
+								if(sharez.length == 0) {
+									//console.log("no match found");
+									//$("#results").html("<p>There are no common probe among all SVs entered</p>");
+									return;
+
+								}
+								sharedSequences.push(merged);
+							}
+
+							if((sharedHolder.length%2) != 0){
+								sharedSequences.push(sharedHolder[sharedHolder.length-1]);
+							}
+						}
+					
+					}
+					var probe = [];
+					//var probes = [];
+					var possProbe = [];
+					//var k = 0;
+					sharedSequences = [].concat.apply([], sharedSequences);
+					//console.log(sharedSequences);
+					for(var i = 0; i<sharedSequences.length; i++) {
+						if(sharedSequences[i] != 0){
+							possProbe.push(sharedSequences[i]);
+						} else {
+							if(possProbe.length >= minLength){//not the largerst possProbe.length > probe.length
+								//probe = possProbe;
+								probe.push(possProbe);
+							}
+							possProbe = [];
+						}
+					}
+
+					//console.log(probe);
+					var finalProbe = ""
+					var finalProbes = [];
+					for(var i = 0; i< probe.length; i++) {
+						finalProbe = "";
+						for(var j = 0; j<probe[i].length; j++){
+							if(probe[i][j] == 1){
+								finalProbe = finalProbe.concat("A");
+							} else if(probe[i][j] == 2) {
+								finalProbe = finalProbe.concat("C");
+							} else if(probe[i][j] == 3) {
+								finalProbe = finalProbe.concat("G");
+							} else {
+								finalProbe = finalProbe.concat("T");
+							}
+						}
+						
+						//console.log(finalProbe);
+						finalProbes.push(finalProbe)
+						//$("#results").append("<p>"+finalProbe+"</p>");
+						//$("#results").append("<p> length of longest probe is "+ finalProbe.length);
+					}
+					finalProbes = finalProbes.filter( function( item, index, inputArray ) {
+						           		return inputArray.indexOf(item) == index;
+						    		});
+					//console.log(finalProbes);
+					return finalProbes;
+				}
+
+				function nucleotidesStrToVector(inputStr){
+					inputStr = inputStr.replace(/[a-z]/g, '');
+					inputStr = inputStr.replace(/A/g, "1 ");
+					inputStr = inputStr.replace(/C/g, "2 ");
+					inputStr = inputStr.replace(/G/g, "3 ");
+					inputStr = inputStr.replace(/T/g, "4 ");
+					var output = inputStr.split(" ").map(Number);;
+					output.pop();
+					return output;
+				}
+
+				//I need to more closely understand what this function does in matlab. Because, it uses a lot of matlab operations that we could possibly get away with by changing the algorithm.
+				function nucleotideSequenceCompare(sequence1, sequence2, minLengthShared) {
+					var sharez = [];
+					//var lengthOfShared = [];
+					//var startPosOfShared = [];
+
+
+					var i = 1;
+
+					var start1O = sequence1.length-1;
+					var start2O = 0;
+					var diff = [];
+					while(i < (sequence2.length+sequence1.length)){
+						diff = [];
+						var possible = [];
+						var start1 = start1O;
+						var start2 = start2O;
+						var k = 0;
+						while(start1 < sequence1.length && start2 < sequence2.length){
+							diff[k] = sequence1[start1] - sequence2[start2];
+							if(diff[k] == 0) {
+								possible.push(sequence1[start1]);
+							} else {
+								if(possible.length >= minLengthShared && possible.length > 0){
+									sharez.push(possible);
+									sharez.push([0]); // separator
+								}
+								possible = [];
+							}
+							start1++;
+							start2++;
+							k++;
+						}
+						if(possible.length >= minLengthShared && possible.length > 0){
+							sharez.push(possible);
+							sharez.push([0]); // separator
+						}
+
+						i++;
+						if (start1O != 0) {
+							start1O--;
+							start2O = 0;
+						} else {
+							start2O++;
+						}
+					}
+					return sharez;
+					
+				}
+
+			</script>
+		
+	</body>
+</html>
