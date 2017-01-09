@@ -48,8 +48,17 @@
 					</div>
 					<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' height= "20px"/><br/>
 					<span>Please enter the minimum length of a share sequence: </span>
-					<input type="text" name="minLength" id = 'minLength'><br/>
+					<input type="text" name="minLength" id='minLength'><br/>
 					<input type="button" value="Submit" onclick="makeChordData()" class="btn btn-primary">
+				</form>
+
+				<span>------- OR --------</span>
+				<form>
+					<select id="species"></select>
+					<input type="text" id="gene"/>
+					<input type="button" value="Select Specie and Gene" onclick="searchForGene();"/>
+					<select id="transcripts"></select>
+					<input type="button" value="Select Transcript" onclick="searchForTranscript();"/>
 				</form>
 			</div>
 
@@ -62,6 +71,76 @@
 			<!--<script src="script2.js"></script>-->
 
 			<script type="text/javascript" src="test.js"></script>
+
+			<script>
+				window.onload = (function() {
+				    var xhr = new XMLHttpRequest();
+				    xhr.open('GET', 'http://rest.ensembl.org/info/species?content-type=application/json');
+				    xhr.onreadystatechange = (function() {
+				        if(xhr.status == 200 && xhr.readyState == 4)
+						{
+							var species = JSON.parse(xhr.responseText);
+							species = species.species;
+							console.log(species);
+
+							var speciesOptions = '';
+							for(var i = 0; i < species.length; i++)
+							{
+								speciesOptions += '<option value="' + species[i].name + '">' + species[i].display_name + '</option>';
+							}
+
+							document.getElementById('species').innerHTML = speciesOptions;
+
+						}
+					});
+					xhr.send();
+				});
+
+				function searchForGene()
+				{
+					var specie = document.getElementById('species');
+					specie = specie.options[specie.selectedIndex].value;
+
+					var gene = document.getElementById('gene').value;
+
+					console.log('Selected Specie:' + specie + ': Selected Gene: ' + gene);
+
+					var xhr = new XMLHttpRequest();
+					xhr.open('GET', 'http://rest.ensembl.org/lookup/symbol/'+specie+'/'+gene+'?content-type=application/json;expand=1');
+					xhr.onreadystatechange = (function() {
+					   if(xhr.status == 200 && xhr.readyState == 4)
+					   {
+							var transcripts = JSON.parse(xhr.responseText);
+							transcripts = transcripts['Transcript'];
+
+							transcriptsOptions = '';
+							for(var i = 0; i < transcripts.length; i++)
+							{
+								transcriptsOptions += '<option value="' + transcripts[i].id + '">' + transcripts[i].id + ' (' + transcripts[i].biotype + ')</option>';
+							}
+
+							document.getElementById('transcripts').innerHTML = transcriptsOptions;
+					   }
+					   else if(xhr.readyState == 4)
+					   {
+					       alert('Supplied Specie and Gene was not found');
+					   }
+					});
+
+					xhr.send(null);
+				}
+
+				function searchForTranscript()
+				{
+					var transcript = document.getElementById('transcripts');
+				}
+
+
+			</script>
+
+
+
+
 			<script type="text/javascript">
 				numberOfSV = 3;
 				function addSV(){
