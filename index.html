@@ -68,7 +68,6 @@
 			<div style="width: 500px; margin-left: 750px; word-wrap: break-word" id="title"> Please click on the probe to get its sequence </div>
 
 			<script src="script2.js"></script>
-			<!--<script src="script2.js"></script>-->
 
 			<script type="text/javascript" src="test.js"></script>
 
@@ -492,7 +491,6 @@
 					}
 					console.log(chordData);
 
-					//var weightedByLength = [];
 					var temp = [];
 
 					for(var i = 0; i < arrayOfProbes.length; i++){
@@ -505,9 +503,6 @@
 					temp2.push({
 						"children": temp
 					})
-					/*weightedByLength.push({
-						"children": temp2
-					})*/
 					weightedByLength = {"children": temp2};
 					console.log(weightedByLength);
 					if(chordData.length != 0){
@@ -516,7 +511,6 @@
 						$("#results").html("no SVs of desired min length was found")
 					}
 					
-					//test(weightedByLength);
 				}
 
 
@@ -524,11 +518,7 @@
 				function findProbes(sv){
 					
 					
-					//return;
 					var spliceVariants = sv;
-					//var spliceVariantsStr = $("#SL").val();
-					//var spliceVariants = spliceVariantsStr.split(","); // can be changed based on the input given by the user
-					//var spliceVariants = spliceVariants;
 					var minLength = Number($("#minLength").val());
 
 					var numVariants = spliceVariants.length;
@@ -554,10 +544,7 @@
 								sharez =  nucleotideSequenceCompare(numericSpliceVariants[i], numericSpliceVariants[i+1], minLength);
 								merged = [].concat.apply([], sharez);
 								
-								//console.log(merged);
 								if(sharez.length == 0) {
-									//console.log("no match found");
-									//$("#results").html("<p>There are no common probe among all SVs entered</p>");
 									return;
 
 								} else {
@@ -577,8 +564,6 @@
 								sharez = nucleotideSequenceCompare(sharedHolder[i], sharedHolder[i+1], minLength);
 								merged = [].concat.apply([], sharez);
 								if(sharez.length == 0) {
-									//console.log("no match found");
-									//$("#results").html("<p>There are no common probe among all SVs entered</p>");
 									return;
 
 								}
@@ -592,24 +577,19 @@
 					
 					}
 					var probe = [];
-					//var probes = [];
 					var possProbe = [];
-					//var k = 0;
 					sharedSequences = [].concat.apply([], sharedSequences);
-					//console.log(sharedSequences);
 					for(var i = 0; i<sharedSequences.length; i++) {
 						if(sharedSequences[i] != 0){
 							possProbe.push(sharedSequences[i]);
 						} else {
 							if(possProbe.length >= minLength){//not the largerst possProbe.length > probe.length
-								//probe = possProbe;
 								probe.push(possProbe);
 							}
 							possProbe = [];
 						}
 					}
 
-					//console.log(probe);
 					var finalProbe = ""
 					var finalProbes = [];
 					for(var i = 0; i< probe.length; i++) {
@@ -626,15 +606,11 @@
 							}
 						}
 						
-						//console.log(finalProbe);
-						finalProbes.push(finalProbe)
-						//$("#results").append("<p>"+finalProbe+"</p>");
-						//$("#results").append("<p> length of longest probe is "+ finalProbe.length);
+						finalProbes.push(finalProbe);
 					}
 					finalProbes = finalProbes.filter( function( item, index, inputArray ) {
 						           		return inputArray.indexOf(item) == index;
 						    		});
-					//console.log(finalProbes);
 					return finalProbes;
 				}
 
@@ -649,12 +625,8 @@
 					return output;
 				}
 
-				//I need to more closely understand what this function does in matlab. Because, it uses a lot of matlab operations that we could possibly get away with by changing the algorithm.
 				function nucleotideSequenceCompare(sequence1, sequence2, minLengthShared) {
 					var sharez = [];
-					//var lengthOfShared = [];
-					//var startPosOfShared = [];
-
 
 					var i = 1;
 
