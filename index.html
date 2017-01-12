@@ -58,8 +58,8 @@
 					<span>Please enter the minimum length of a share sequence: </span>
 					<input type="text" name="minLength" id='minLength'><br/>
 					<span style="margin-right: 15px">Weight Probes by:</span>
-					<input type="radio" name="gender" value="male" checked> Length of the Probe <span style="margin-left: 15px"></span>
-  					<input type="radio" name="gender" value="female"> Number of Transcripts Containing the Probe<br>
+					<input type="radio" name="weight" value="length" checked> Length of the Probe <span style="margin-left: 15px"></span>
+  					<input type="radio" name="weight" value="shared"> Number of Transcripts Containing the Probe<br>
 					<input type="button" value="Submit" onclick="makeChordData()" class="btn btn-primary button">
 				</form>
 
@@ -205,6 +205,14 @@
 					$("#results").empty();
 					$("#sv-chart").empty();
 
+					var length = true; 
+					console.log("weight")
+					console.log($('input[name=weight]:checked').val())
+					if($('input[name=weight]:checked').val() == "shared"){
+						length = false;
+						var weights = [];
+					}
+
 					var spliceVariants= $(".SV").map(function() {
 					   return $(this).val();
 					}).get();
@@ -220,9 +228,13 @@
 					
 
 					var chordData = [];
+
 					if(arrayOfProbes.length != 0){
 						for(var i = 0; i<n; i++){
 							for(var j = 0; j < arrayOfProbes.length; j++){
+								if(!length && i == 0){
+									weights.push(numberOfSV);
+								}
 								chordData.push({
 									"SpliceVariant": $( "input[name='name"+(i+1)+"']" ).val(),
 									"probe": arrayOfProbes[j],
@@ -245,6 +257,10 @@
 							for(var k=0; k < temp.length; k++){
 								if(arrayOfProbes.indexOf(temp[k]) == -1){
 									arrayOfProbes.push(temp[k]);
+									if(!length){
+										weights.push(numberOfSV - 1);
+									}
+									
 									console.log("temp found")
 									console.log(temp[k]);
 									for(m=0; m < n; m++){
@@ -279,6 +295,10 @@
 								for(var k=0; k < temp.length; k++){
 									if(arrayOfProbes.indexOf(temp[k]) == -1){
 										arrayOfProbes.push(temp[k]);
+										if(!length){
+											weights.push(numberOfSV - 2);
+										}
+
 										for(m=0; m < n; m++){
 											if(m != i && m != j){
 												chordData.push({
@@ -312,6 +332,9 @@
 									for(var k=0; k < temp.length; k++){
 										if(arrayOfProbes.indexOf(temp[k]) == -1){
 											arrayOfProbes.push(temp[k]);
+											if(!length){
+												weights.push(numberOfSV - 3);
+											}
 											for(m=0; m < n; m++){
 												if(m != i && m != j && m != f){
 													chordData.push({
@@ -347,6 +370,9 @@
 										for(var k=0; k < temp.length; k++){
 											if(arrayOfProbes.indexOf(temp[k]) == -1){
 												arrayOfProbes.push(temp[k]);
+												if(!length){
+													weights.push(numberOfSV - 4);
+												}
 												for(m=0; m < n; m++){
 													if(m != i && m != j && m != f && m != l){
 														chordData.push({
@@ -385,6 +411,9 @@
 											for(var k=0; k < temp.length; k++){
 												if(arrayOfProbes.indexOf(temp[k]) == -1){
 													arrayOfProbes.push(temp[k]);
+													if(!length){
+														weights.push(numberOfSV - 5);
+													}
 													for(m=0; m < n; m++){
 														if(m != i && m != j && m != f && m != l && m != r){
 															chordData.push({
@@ -427,6 +456,9 @@
 												for(var k=0; k < temp.length; k++){
 													if(arrayOfProbes.indexOf(temp[k]) == -1){
 														arrayOfProbes.push(temp[k]);
+														if(!length){
+															weights.push(numberOfSV - 6);
+														}
 														for(m=0; m < n; m++){
 															if(m != i && m != j && m != f && m != l && m != r && m != s){
 																chordData.push({
@@ -471,6 +503,9 @@
 													for(var k=0; k < temp.length; k++){
 														if(arrayOfProbes.indexOf(temp[k]) == -1){
 															arrayOfProbes.push(temp[k]);
+															if(!length){
+																weights.push(numberOfSV - 7);
+															}
 															for(m=0; m < n; m++){
 																if(m != i && m != j && m != f && m != l && m != r && m != s && m != w){
 																	chordData.push({
@@ -518,6 +553,9 @@
 														for(var k=0; k < temp.length; k++){
 															if(arrayOfProbes.indexOf(temp[k]) == -1){
 																arrayOfProbes.push(temp[k]);
+																if(!length){
+																	weights.push(numberOfSV - 8);
+																}
 																for(m=0; m < n; m++){
 																	if(m != i && m != j && m != f && m != l && m != r && m != s && m != w && m != v){
 																		chordData.push({
@@ -543,10 +581,18 @@
 					var temp = [];
 
 					for(var i = 0; i < arrayOfProbes.length; i++){
-						temp.push({
-							"name" : arrayOfProbes[i],
-							"size" : arrayOfProbes[i].length 
-						})
+						if(!length){
+							temp.push({
+								"name" : arrayOfProbes[i],
+								"size" : weights[i]
+							})
+						} else {
+							temp.push({
+								"name" : arrayOfProbes[i],
+								"size" : arrayOfProbes[i].length 
+							})
+						}
+						
 					}
 					var temp2 = [];
 					temp2.push({
