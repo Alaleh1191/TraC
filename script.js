@@ -74,11 +74,11 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 
 
 			
-d3.json('lotr_words_location.json', function (error, dataAgg) {
+d3.json('lotr.json', function (error, dataAgg) {
 
 	////////// testing ////////////
-	var svg2 = d3.select("svg"),
-	    diameter = +svg2.attr("width") - 450;
+	//var svg2 = d3.select("svg"),
+	  //  diameter = +svg2.attr("width") - 450;
 	    
 
 

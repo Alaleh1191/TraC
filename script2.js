@@ -110,11 +110,12 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 	
 	////////////////////////////////////////////////////////////
 	///////////////////////// Colors ///////////////////////////
-	////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////"#5a3511", "#47635f",   "#223e15", "#C6CAC9", "#0d1e25",  "#53821a",    "#4387AA",         "#770000", "#373F41", "#602317",     "#8D9413",   "#c17924", "#3C7E16"
 					
 	//Color for the unique locations
-	var locations = [1, 2, 3, 4,  5, 6, 7, 8,  9, 10, 11, 12, 13];
-	var colors = ["#5a3511", "#47635f",   "#223e15", "#C6CAC9", "#0d1e25",  "#53821a",    "#4387AA",         "#770000", "#373F41", "#602317",     "#8D9413",   "#c17924", "#3C7E16"];
+	var locations = [$( "input[name='name"+1+"']" ).val(), $( "input[name='name"+2+"']" ).val(), $( "input[name='name"+3+"']" ).val(), $( "input[name='name"+4+"']" ).val(),  $( "input[name='name"+5+"']" ).val(), $( "input[name='name"+6+"']" ).val(), $( "input[name='name"+7+"']" ).val(), $( "input[name='name"+8+"']" ).val(),  $( "input[name='name"+9+"']" ).val(), $( "input[name='name"+10+"']" ).val(), $( "input[name='name"+11+"']" ).val(), $( "input[name='name"+12+"']" ).val(), $( "input[name='name"+13+"']" ).val(), $( "input[name='name"+14+"']" ).val(), $( "input[name='name"+15+"']" ).val(), $( "input[name='name"+16+"']" ).val(), $( "input[name='name"+17+"']" ).val()];
+	//var colors = ["#FE7351", "#38BEB7","#FBA89A", "#DBE380", "#FE6C5F", "#EBF39E", "#ECE8DD", "#D8F5F0" , "#1395B5" , "#14D9C8" , "#D7E643" , "#CEEBFB" , "#E5726B", "#EA706F" , "#CFCA6F", "#F1E64E", "#FFD2C3"];
+	var colors = [ "#1395B5", "#FE7351","rgb(130, 195, 53)",  "#EA706F" ,  "#F1E64E", "#B3AEB2", "#14D9C8" , "rgb(154, 4, 4)", "rgb(49, 152, 206)", "rgb(62, 165, 5)", "#D7E643", "#7486c3", "rgb(64, 135, 24)","#FE6C5F", "#F1E64E", "#98B914",];
 	var color = d3.scaleOrdinal()
     	.domain(locations)
     	.range(colors);
@@ -430,15 +431,29 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 	////////////////////////////////////////////////////////////
 
 	//The text needs to be rotated with the offset in the clockwise direction
-	/*var outerLabels = arcs.append("g")
+	var outerLabels = arcs.append("g")
 		.each(function(d) { d.angle = ((d.startAngle + d.endAngle) / 2); })
 		.attr("class", "outer-labels")
 		.attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
 		.attr("transform", function(d,i) { 
+			console.log("angle"+ d.angle)
 			var c = arc.centroid(d);
+			console.log("c");
+			var rotate, translate;
+			console.log(c);
+			if (d.angle * 180 / Math.PI  < 180){
+				rotate = d.angle * 180 / Math.PI;  
+				translate = -20;
+			}
+			else {
+				rotate = d.angle * 180 / Math.PI -180;
+				translate = 20;
+			}
+				
+			d.pullOutSize = 0
 			return "translate(" + (c[0] + d.pullOutSize) + "," + c[1] + ")"
-			+ "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-			+ "translate(" + 26 + ",0)"
+			+ "rotate(" + rotate +")"// - 90
+			+ "translate(0,"+translate+")"//26, 0
 			+ (d.angle > Math.PI ? "rotate(180)" : "")
 		})
 		
@@ -449,11 +464,11 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 		.text(function(d,i){ return d.outername; });
 		
 	//The value below it
-	outerLabels.append("text")
+	/*outerLabels.append("text")
 		.attr("class", "outer-label-value")
 		.attr("dy", "1.5em")
-		.text(function(d,i){ return numFormat(d.value) + " words"; });
-*/
+		.text(function(d,i){ return numFormat(d.value); });*/
+
 	
 		
 	

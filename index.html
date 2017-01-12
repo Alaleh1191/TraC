@@ -30,35 +30,46 @@
 		<script src="loom.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script src="string.js"></script>
+		<link href="flat/blue.css" rel="stylesheet">
+		<script src="icheck.js"></script>
+		<link href='//fonts.googleapis.com/css?family=Capriola' rel='stylesheet'>
 	</head>
 	<body>
 			<div>
 				<form>
-					<span>Please enter the splice variants:</span><br/>
+					<span>Please enter the sequence for transcript:</span><br/>
 					<div id = "SVs">
-						<span class= "1"> 1. </span>
+						<!--<span class= "1"> 1. </span>-->
+						<span class= "1"> Name: </span>
+						<input type="text" name="name1" class="1" value="1" onfocus="onFocus(this)" onblur="onBlur(this)">
+						<span class= "1"> Sequence: </span>
+						<textarea class ="SV 1" style="width: 525px;  height: 13px; margin-bottom: -5px"></textarea>
 						
-						<textarea class ="SV 1" style="width: 525px;  height: 20px"></textarea>
-						<img class = "1" onclick="removeSV(1)" src="x-button.png" alt="delete" height="25px"><!--http://tdyln.me/tdyln-0065-x-10-july-2015/ cite this-->
+						<img class = "1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript"><!--http://tdyln.me/tdyln-0065-x-10-july-2015/ cite this-->
 						<br class = "1"/>
-						<span class = "2"> 2. </span>
-						<textarea class ="SV 2"  style="width: 525px;  height: 20px"></textarea>
-						<img class ="2" onclick="removeSV(2)" src="x-button.png" alt="delete" height="25px">
+						<span class = "2"> Name: </span>
+						<input type="text" name="name2" class="2" value="2" onfocus="onFocus(this)" onblur="onBlur(this)">
+						<span class= "2"> Sequence: </span>
+						<textarea class ="SV 2"  style="width: 525px; height: 13px; margin-bottom: -5px"></textarea>
+						<img class ="2" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px">
 						<br class = "2"/>
 					</div>
 					<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' height= "20px"/><br/>
 					<span>Please enter the minimum length of a share sequence: </span>
 					<input type="text" name="minLength" id='minLength'><br/>
-					<input type="button" value="Submit" onclick="makeChordData()" class="btn btn-primary">
+					<span style="margin-right: 15px">Weight Probes by:</span>
+					<input type="radio" name="gender" value="male"> Length of the Probe <span style="margin-left: 15px"></span>
+  					<input type="radio" name="gender" value="female"> Number of Transcripts Containing the Probe<br>
+					<input type="button" value="Submit" onclick="makeChordData()" class="btn btn-primary button">
 				</form>
 
-				<span>------- OR --------</span>
+				<span>------- AND/OR --------</span>
 				<form>
 					<select id="species"></select>
 					<input type="text" id="gene"/>
 					<input type="button" value="Select Specie and Gene" onclick="searchForGene();"/>
 					<select id="transcripts"></select>
-					<input type="button" value="Select Transcript" onclick="searchForTranscript();"/>
+					<input type="button" value="Add Transcript(s) to the list" onclick="searchForTranscript();"/>
 				</form>
 			</div>
 
@@ -141,15 +152,53 @@
 
 
 			<script type="text/javascript">
+				$(document).ready(function(){
+				  $('input').iCheck({
+				    checkboxClass: 'icheckbox_flat-blue',
+				    radioClass: 'iradio_flat-blue'
+				  });
+				});
 				numberOfSV = 3;
 				function addSV(){
-					$("#SVs").append("<span class='"+numberOfSV+"'> "+numberOfSV+". </span> <textarea class ='SV "+numberOfSV+"'  style='width: 525px;  height: 20px'></textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class="+numberOfSV+" onclick='removeSV("+numberOfSV+")' src='x-button.png' alt='delete' height='25px'> <br class='"+numberOfSV+"'/>")
+					$("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+numberOfSV+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class ='SV "+numberOfSV+"'  style='width: 525px;  height: 13px; margin-bottom: -5px'></textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class="+numberOfSV+" onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
 					numberOfSV++;
 				}
 
+				function onFocus(sv){
+					console.log($( "input[name='name"+sv.className+"']" ).val());
+					console.log(sv.className);
+					if($( "input[name='name"+sv.className+"']" ).val()==sv.className) 
+						$( "input[name='name"+sv.className+"']" ).val("");
+					else
+						console.log("error")
+				}
+
+				function onBlur(sv) {
+					if($( "input[name='name"+sv.className+"']" ).val()=='')
+						{$( "input[name='name"+sv.className+"']" ).val(sv.className);}
+				}
 				function removeSV(sv){
+					sv = sv.className;
 					var remove = "."+sv
 					$(remove).remove();
+					console.log("num" + numberOfSV);
+					console.log("sv" + sv)
+					while(sv < numberOfSV){
+						sv++;
+						var toggleClass = "."+ sv;
+						var newClass = sv-1;
+						console.log(toggleClass);
+						console.log(newClass);
+						if($( "input[name='name"+sv+"']" ).val() == sv){
+							$( "input[name='name"+sv+"']" ).val(newClass);
+						}
+						
+						$( "input[name='name"+sv+"']" ).attr("name", "name"+newClass)
+						$(toggleClass).addClass(newClass.toString()).removeClass(sv.toString());
+						
+					//	$(toggleClass).addClass(newClass).removeClass("'"+sv+"'");
+					}
+					numberOfSV--;
 				}
 
 				function makeChordData(){
@@ -175,7 +224,7 @@
 						for(var i = 0; i<n; i++){
 							for(var j = 0; j < arrayOfProbes.length; j++){
 								chordData.push({
-									"SpliceVariant": i+1,
+									"SpliceVariant": $( "input[name='name"+(i+1)+"']" ).val(),
 									"probe": arrayOfProbes[j],
 									"size": arrayOfProbes[j].length
 								});
@@ -202,7 +251,7 @@
 										if(m != i){
 											console.log("all but " + i + "have "+temp[k]);
 											chordData.push({
-												"SpliceVariant": m+1,
+												"SpliceVariant": $( "input[name='name"+(m+1)+"']" ).val(),
 												"probe": temp[k],
 												"size": temp[k].length
 											});
@@ -233,7 +282,7 @@
 										for(m=0; m < n; m++){
 											if(m != i && m != j){
 												chordData.push({
-													"SpliceVariant": m+1,
+													"SpliceVariant": $( "input[name='name"+(m+1)+"']" ).val(),
 													"probe": temp[k],
 													"size": temp[k].length
 												});
@@ -266,7 +315,7 @@
 											for(m=0; m < n; m++){
 												if(m != i && m != j && m != f){
 													chordData.push({
-														"SpliceVariant": m+1,
+														"SpliceVariant": $( "input[name='name"+(m+1)+"']" ).val(),
 														"probe": temp[k],
 														"size": temp[k].length
 													});
@@ -301,7 +350,7 @@
 												for(m=0; m < n; m++){
 													if(m != i && m != j && m != f && m != l){
 														chordData.push({
-															"SpliceVariant": m+1,
+															"SpliceVariant": $( "input[name='name"+(m+1)+"']" ).val(),
 															"probe": temp[k],
 															"size": temp[k].length
 														});
@@ -339,7 +388,7 @@
 													for(m=0; m < n; m++){
 														if(m != i && m != j && m != f && m != l && m != r){
 															chordData.push({
-																"SpliceVariant": m+1,
+																"SpliceVariant": $( "input[name='name"+(m+1)+"']" ).val(),
 																"probe": temp[k],
 																"size": temp[k].length
 															});
@@ -381,7 +430,7 @@
 														for(m=0; m < n; m++){
 															if(m != i && m != j && m != f && m != l && m != r && m != s){
 																chordData.push({
-																	"SpliceVariant": m+1,
+																	"SpliceVariant": $( "input[name='name"+(m+1)+"']" ).val(),
 																	"probe": temp[k],
 																	"size": temp[k].length
 																});
@@ -425,7 +474,7 @@
 															for(m=0; m < n; m++){
 																if(m != i && m != j && m != f && m != l && m != r && m != s && m != w){
 																	chordData.push({
-																		"SpliceVariant": m+1,
+																		"SpliceVariant": $( "input[name='name"+(m+1)+"']" ).val(),
 																		"probe": temp[k],
 																		"size": temp[k].length
 																	});
@@ -472,7 +521,7 @@
 																for(m=0; m < n; m++){
 																	if(m != i && m != j && m != f && m != l && m != r && m != s && m != w && m != v){
 																		chordData.push({
-																			"SpliceVariant": m+1,
+																			"SpliceVariant": $( "input[name='name"+(m+1)+"']" ).val(),
 																			"probe": temp[k],
 																			"size": temp[k].length
 																		});
