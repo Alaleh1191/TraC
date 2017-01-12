@@ -18,6 +18,15 @@
 		  text-anchor: middle;
 		}
 
+		.overlay {
+		  fill: none;
+		  pointer-events: all;
+		}
+		.axis path, .axis line {
+    		fill: none;
+    		stroke: none;
+    		shape-rendering: crispEdges;
+		}
 		</style>
 		
 		<!-- Styling -->
@@ -56,11 +65,11 @@
 					</div>
 					<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' height= "20px"/><br/>
 					<span>Please enter the minimum length of a share sequence: </span>
-					<input type="text" name="minLength" id='minLength'><br/>
+					<input type="text" name="minLength" id='minLength' value="1" onfocus="if (this.value==1) this.value = ''" onblur="if (this.value=='') this.value = 1"><br/>
 					<span style="margin-right: 15px">Weight Probes by:</span>
 					<input type="radio" name="weight" value="length" checked> Length of the Probe <span style="margin-left: 15px"></span>
   					<input type="radio" name="weight" value="shared"> Number of Transcripts Containing the Probe<br>
-					<input type="button" value="Submit" onclick="makeChordData()" class="btn btn-primary button">
+					<input type="button" value="Submit" onclick="makeChordData(); displayTranscripts();" class="btn btn-primary button">
 				</form>
 
 				<span>------- AND/OR --------</span>
@@ -76,7 +85,9 @@
 
 			<div  style="width: 525px;white-space: pre-wrap;word-wrap: break-word;"><span id = "results"></span></div>
 			<div id="sv-chart" style="width: 700px; float: left; position: absolute;"></div>
-			<div style="width: 500px; margin-left: 750px; word-wrap: break-word" id="title"> Please click on the probe to get its sequence </div>
+			<div style="width: 500px; margin-left: 750px;" id="probeLoc">  </div>
+
+			<div id="title" style="width: 500px; margin-left: 750px; word-wrap: break-word"> Please click on the probe to get its sequence </div>
 
 			<script src="script2.js"></script>
 
@@ -159,6 +170,101 @@
 				  });
 				});
 				numberOfSV = 3;
+
+				function displayTranscripts(){
+					$("#probeLoc").empty();
+
+					var spliceVariants= $(".SV").map(function() {
+					   return $(this).val();
+					}).get();
+
+					//var orgSplice = spliceVariants
+					console.log(spliceVariants);
+					var longestSeq = spliceVariants.sort(function (a, b) { return b.length - a.length; })[0];
+					console.log("longest" + longestSeq.length);
+
+					spliceVariants= $(".SV").map(function() {
+					   return $(this).val();
+					}).get();
+
+					var xScale = d3.scaleLinear()//scaleLinear v4
+				        .domain(
+				         	[0,longestSeq.length]
+				        )
+				        .range([0,580]);
+
+
+				    // Zooming behavior, only zoom on the x-Axis
+					//var zoom = d3.zoom()
+					    //.x(xScale)
+					  //  .on("zoom", zoomed);
+					var height = spliceVariants.length * 30 + 20;
+
+				    var svg = d3.select("#probeLoc")
+							.append("svg")
+							.attr("id", "svgT")
+							.attr("width", "600px")
+							.attr("class" , "svg")
+							.attr("height", height)
+							.append("g")
+						  //  .call(zoom)
+						  	.append("g")
+						  	.attr("class", "g");
+
+					 // Create the x-Axis
+					/*var xAxis = d3.svg.axis()
+					    .scale(xScale)
+					    .orient("bottom")
+					    .tickSize(-height);
+
+					svg.append("g")
+					    .attr("class", "x axis")
+					    .attr("transform", "translate(0," + height + ")")
+					    .call(xAxis);*/
+
+
+					//Color for the unique locations
+					var locations = [$( "input[name='name"+1+"']" ).val(), $( "input[name='name"+2+"']" ).val(), $( "input[name='name"+3+"']" ).val(), $( "input[name='name"+4+"']" ).val(),  $( "input[name='name"+5+"']" ).val(), $( "input[name='name"+6+"']" ).val(), $( "input[name='name"+7+"']" ).val(), $( "input[name='name"+8+"']" ).val(),  $( "input[name='name"+9+"']" ).val(), $( "input[name='name"+10+"']" ).val(), $( "input[name='name"+11+"']" ).val(), $( "input[name='name"+12+"']" ).val(), $( "input[name='name"+13+"']" ).val(), $( "input[name='name"+14+"']" ).val(), $( "input[name='name"+15+"']" ).val(), $( "input[name='name"+16+"']" ).val(), $( "input[name='name"+17+"']" ).val()];
+					//var colors = ["#FE7351", "#38BEB7","#FBA89A", "#DBE380", "#FE6C5F", "#EBF39E", "#ECE8DD", "#D8F5F0" , "#1395B5" , "#14D9C8" , "#D7E643" , "#CEEBFB" , "#E5726B", "#EA706F" , "#CFCA6F", "#F1E64E", "#FFD2C3"];
+					var colors = [ "#1395B5", "#FE7351","rgb(130, 195, 53)",  "#EA706F" ,  "#F1E64E", "#B3AEB2", "#14D9C8" , "rgb(154, 4, 4)", "rgb(49, 152, 206)", "rgb(62, 165, 5)", "#D7E643", "#7486c3", "rgb(64, 135, 24)","#FE6C5F", "#F1E64E", "#98B914",];
+					var color = d3.scaleOrdinal()
+				    	.domain(locations)
+				    	.range(colors);
+
+					svg.append("rect")
+					    .attr("class", "overlay")
+					    .attr("width", width)
+					    .attr("height", height);
+
+					var text = svg.append("g").attr("class", "text");
+					var yloc = 10;
+
+					for(var i = 0; i < spliceVariants.length; i++){
+						var name = $( "input[name='name"+(i+1)+"']" ).val();
+						console.log(name)
+						// Each Transcript
+						svg.append("rect")
+				            .attr("x", 0)
+				            .attr("y", yloc)
+				            .attr("width", xScale(spliceVariants[i].length))
+				            .attr("height", 20)
+				            .style("opacity", 0.85)
+							.attr("fill", color(name));
+
+						// The name of the gene
+						d3.select(".svg").append("text")
+							.attr("class", "vals")
+							.attr("x", xScale(spliceVariants[i].length)+10)
+				            .attr("y", yloc+15)
+				            .text(name)
+				           // .attr("font-family", "sans-serif")
+				            .style("font-size", "17px")
+				            .style('pointer-events', 'none');
+
+				        yloc += 30;
+				    }
+				}
+
 				function addSV(){
 					$("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+numberOfSV+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class ='SV "+numberOfSV+"'  style='width: 525px;  height: 13px; margin-bottom: -5px'></textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class="+numberOfSV+" onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
 					numberOfSV++;
@@ -199,6 +305,27 @@
 					//	$(toggleClass).addClass(newClass).removeClass("'"+sv+"'");
 					}
 					numberOfSV--;
+				}
+
+
+				function zoomed() {
+					
+					// zoom behavior of svg	  
+					translate = [d3.event.translate[0], 0];
+					svg.attr("transform", "translate(" + translate + ")scale(" + d3.event.scale + ", 1)");
+				
+					// zoom behavior of texts 
+					d3.selectAll(".vals").each(function(i, d){
+						
+						if(vals.length < numtext){
+							vals[d] = d3.select(this).attr("x")
+						} 
+					
+						val = vals[d] * d3.event.scale + d3.event.translate[0];
+					
+						d3.select(this).attr("x", val);
+
+					})
 				}
 
 				function makeChordData(){
@@ -584,7 +711,7 @@
 						if(!length){
 							temp.push({
 								"name" : arrayOfProbes[i],
-								"size" : weights[i]
+								"size" : weights[i]*10
 							})
 						} else {
 							temp.push({

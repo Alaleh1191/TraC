@@ -298,6 +298,7 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 		})
 		.on("click", function(d) {
 			d3.select("#title").html("Probe: "+ d.name);
+			displayLocation(d.name);
 		})
      	.on("mouseout", function(d) {
 			
@@ -482,11 +483,51 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 ///////////////////// Extra functions //////////////////////
 ////////////////////////////////////////////////////////////
 
+//Display where the probe is located relative to the transcript 
+function displayLocation(name){
+	$( ".probe" ).remove();
+
+	var spliceVariants= $(".SV").map(function() {
+	   return $(this).val();
+	}).get();
+
+	//var orgSplice = spliceVariants
+	console.log(spliceVariants);
+	var longestSeq = spliceVariants.sort(function (a, b) { return b.length - a.length; })[0];
+	console.log("longest" + longestSeq.length);
+
+	spliceVariants= $(".SV").map(function() {
+	   return $(this).val();
+	}).get();
+
+	var xScale = d3.scaleLinear()//scaleLinear v4
+        .domain(
+         	[0,longestSeq.length]
+        )
+        .range([0,580]);
+
+	var yloc = 10;
+	for(var i = 0; i < spliceVariants.length; i++){
+		
+		if(spliceVariants[i].indexOf(name) != -1){// if transcript contains the desired probe
+			d3.select("#svgT").append("rect")
+				            .attr("x", xScale(spliceVariants[i].indexOf(name)))
+				            .attr("y", yloc)
+				            .attr("width", xScale(name.length))
+				            .attr("height", 20)
+				            .attr("class", "probe")
+							.attr("fill", "rgb(228, 75, 75)");
+		}
+		yloc += 30;
+	}
+}
+
+
 //Sort alphabetically
 function sortAlpha(a, b){
-	    if(a < b) return -1;
-	    if(a > b) return 1;
-	    return 0;
+    if(a < b) return -1;
+    if(a > b) return 1;
+    return 0;
 }//sortAlpha
 
 //Sort on the number of words
