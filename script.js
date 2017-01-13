@@ -25,9 +25,9 @@ var loom = loom()
     .padAngle(0.05)
 	.emptyPerc(0)//0.2 alaleh
 	.widthOffsetInner(0)
-	.value(function(d) { return d.words; })
-	.inner(function(d) { return d.character; })
-	.outer(function(d) { return d.location; });
+	.value(function(d) { return d.size; })
+	.inner(function(d) { return d.probe; })
+	.outer(function(d) { return d.SpliceVariant; });
 
 var arc = d3.arc()
     .innerRadius(innerRadius*1.01)
@@ -37,16 +37,16 @@ var string = string()
     .radius(innerRadius)
 	.pullout(0);//pulloutsize alaleh
 
-var svg = d3.select("#sv-chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
+
 
 ////////////////////////////////////////////////////////////
 ///////////////////// Read in data /////////////////////////
 ////////////////////////////////////////////////////////////
 
 function drawChord(chord, probe){
-
+var svg = d3.select("#sv-chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
 
 ////////////////////////////////////////////////////////////
 //////////////////// Character notes ///////////////////////
@@ -74,11 +74,11 @@ characterNotes["Legolas"] = "Although a very memorable presence throughout the m
 
 
 			
-d3.json('lotr.json', function (error, dataAgg) {
+//d3.json('lotr_words_location.json', function (error, dataAgg) {
 
 	////////// testing ////////////
-	//var svg2 = d3.select("svg"),
-	  //  diameter = +svg2.attr("width") - 450;
+	var svg2 = d3.select("svg"),
+	    diameter = +svg2.attr("width") - 450;
 	    
 
 
@@ -92,10 +92,10 @@ d3.json('lotr.json', function (error, dataAgg) {
 	
 	//Find the total number of words per character
 	var dataChar = d3.nest()
-		.key(function(d) { return d.character; })
-		.rollup(function(leaves) { return d3.sum(leaves, function(d) { return d.words; }); })
-		.entries(dataAgg)
-		.sort(function(a, b){ return d3.descending(a.value, b.value); });				
+		.key(function(d) { return d.probe; })
+		.rollup(function(leaves) { return d3.sum(leaves, function(d) { return d.size; }); })
+		.entries(chord)
+		.sort(function(a, b){ return d3.descending(a.value, b.value); });	//no clue			
 	//Unflatten the result
 	var characterOrder = dataChar.map(function(d) { return d.key; });
 	//Sort the characters on a specific order
@@ -110,23 +110,26 @@ d3.json('lotr.json', function (error, dataAgg) {
 	
 	////////////////////////////////////////////////////////////
 	///////////////////////// Colors ///////////////////////////
-	////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////"#5a3511", "#47635f",   "#223e15", "#C6CAC9", "#0d1e25",  "#53821a",    "#4387AA",         "#770000", "#373F41", "#602317",     "#8D9413",   "#c17924", "#3C7E16"
 					
 	//Color for the unique locations
-	var locations = ["Bree", "Emyn Muil", "Fangorn", "Gondor",  "Isengard", "Lothlorien", "Misty Mountains", "Mordor",  "Moria",   "Parth Galen", "Rivendell", "Rohan",   "The Shire"];
-	var colors = ["#5a3511", "#47635f",   "#223e15", "#C6CAC9", "#0d1e25",  "#53821a",    "#4387AA",         "#770000", "#373F41", "#602317",     "#8D9413",   "#c17924", "#3C7E16"];
+	var locations = [$( "input[name='name"+1+"']" ).val(), $( "input[name='name"+2+"']" ).val(), $( "input[name='name"+3+"']" ).val(), $( "input[name='name"+4+"']" ).val(),  $( "input[name='name"+5+"']" ).val(), $( "input[name='name"+6+"']" ).val(), $( "input[name='name"+7+"']" ).val(), $( "input[name='name"+8+"']" ).val(),  $( "input[name='name"+9+"']" ).val(), $( "input[name='name"+10+"']" ).val(), $( "input[name='name"+11+"']" ).val(), $( "input[name='name"+12+"']" ).val(), $( "input[name='name"+13+"']" ).val(), $( "input[name='name"+14+"']" ).val(), $( "input[name='name"+15+"']" ).val(), $( "input[name='name"+16+"']" ).val(), $( "input[name='name"+17+"']" ).val()];
+	//var colors = ["#FE7351", "#38BEB7","#FBA89A", "#DBE380", "#FE6C5F", "#EBF39E", "#ECE8DD", "#D8F5F0" , "#1395B5" , "#14D9C8" , "#D7E643" , "#CEEBFB" , "#E5726B", "#EA706F" , "#CFCA6F", "#F1E64E", "#FFD2C3"];
+	var colors = [ "#1395B5", "#FE7351","rgb(130, 195, 53)",  "#EA706F" ,  "#F1E64E", "#B3AEB2", "#14D9C8" , "rgb(154, 4, 4)", "rgb(49, 152, 206)", "rgb(62, 165, 5)", "#D7E643", "#7486c3", "rgb(64, 135, 24)","#FE6C5F", "#F1E64E", "#98B914",];
 	var color = d3.scaleOrdinal()
     	.domain(locations)
     	.range(colors);
 	
+
+
 	//Create a group that already holds the data
 	var g = svg.append("g")
 	    .attr("transform", "translate(" + (width/2 + margin.left) + "," + (height/2 + margin.top) + ")")
-		.datum(loom(dataAgg));	
+		.datum(loom(chord));	
 
 
 		// creating packed circles
-	g2 = g.append("g").attr("transform", "translate(-129,-129)");
+	//g2 = g.append("g").attr("transform", "translate(-129,-129)");
 
 	var pack = d3.pack()
 	    .size([diameter-4, diameter-4])
@@ -134,10 +137,10 @@ d3.json('lotr.json', function (error, dataAgg) {
 
 
 
-	d3.json("flare.json", function(error, root) {
-		if (error) throw error;
+	//d3.json("flare.json", function(error, root) {
+		//if (error) throw error;
 		 
-	  	root = d3.hierarchy(root)
+	  	root = d3.hierarchy(probe)
 		    .sum(function(d) { return d.size; })
 		    .sort(function(a, b) { return b.value - a.value; });
 
@@ -162,20 +165,20 @@ d3.json('lotr.json', function (error, dataAgg) {
 	    	}
 	    }
 
-	    console.log(arr);
-
+	//    console.log(arr);
 
 ////////////////////////////////////////////////////////////
 	////////////////// Draw inner strings //////////////////////
 	////////////////////////////////////////////////////////////
 	var inner;
+//	console.log(g);
 	var strings = g.append("g")
 	    .attr("class", "stringWrapper")
 		.style("isolation", "isolate")
-	  .selectAll("path")
-	    .data(function(strings) {
-	    	console.log("consoling strings"); 
-	    	console.log(strings);
+	  	.selectAll("path")
+	    .data(function(strings) { 
+
+	    //	console.log(strings);
 	    	for(var i = 0; i<strings.length; i++){
 	    		//console.log(strings[i].inner)
 	    		inner = arr.find(x => x.name === strings[i].inner.name)
@@ -183,10 +186,10 @@ d3.json('lotr.json', function (error, dataAgg) {
 	    		strings[i].inner = arr.find(x => x.name === strings[i].inner.name);
 
 	    	}
-
+	    	console.log(strings);
 			return strings; 
 		})
-	  .enter().append("path")
+	  	.enter().append("path")
 		.attr("class", "string")
 		.style("mix-blend-mode", "multiply")
 	    .attr("d", string)
@@ -239,6 +242,8 @@ d3.json('lotr.json', function (error, dataAgg) {
 					return s.outer.innername !== d.name ? fadeOpacity : 1;
 				});
 
+			//d3.select("#title").html("Probe: "+ d.name);
+
 			d3.selectAll(".inner-labels")
 		      	.transition()
 		        .style("opacity", function(s) {
@@ -248,7 +253,7 @@ d3.json('lotr.json', function (error, dataAgg) {
 				});
 				
 			//Update the word count of the outer labels
-			var characterData = loom(dataAgg).filter(function(s) { return s.outer.innername === d.name; });
+			var characterData = loom(chord).filter(function(s) { return s.outer.innername === d.name; });
 			d3.selectAll(".outer-label-value")
 				.text(function(s,i){
 					//Find which characterData is the correct one based on location
@@ -291,11 +296,18 @@ d3.json('lotr.json', function (error, dataAgg) {
 				.call(wrap, 2.25*pullOutSize);*/
 				
 		})
+		.on("click", function(d) {
+			d3.select("#title").html("Probe: "+ d.name);
+			displayLocation(d.name);
+		})
      	.on("mouseout", function(d) {
 			
      		d3.selectAll(".inner-labels")
 		      	.transition()
 		        .style("opacity", 1);
+
+
+		   // d3.select("#title").html(" ");
 
 
 			//Put the string opacity back to normal
@@ -334,7 +346,7 @@ d3.json('lotr.json', function (error, dataAgg) {
  	 	.on("mouseover", function(d) {
 
  	 		//Find the data for the strings of the hovered over location
-			var locationData = loom(dataAgg).filter(function(s) { return s.outer.outername === d.outername; });
+			var locationData = loom(chord).filter(function(s) { return s.outer.outername === d.outername; });
  	 		d3.selectAll(".inner-labels")
 		      	.transition()
 		        .style("opacity", function(s) {
@@ -408,7 +420,7 @@ d3.json('lotr.json', function (error, dataAgg) {
 		 //}); alaleh
 
 
-	});
+	//});
 
 
 	
@@ -420,15 +432,29 @@ d3.json('lotr.json', function (error, dataAgg) {
 	////////////////////////////////////////////////////////////
 
 	//The text needs to be rotated with the offset in the clockwise direction
-	/*var outerLabels = arcs.append("g")
+	var outerLabels = arcs.append("g")
 		.each(function(d) { d.angle = ((d.startAngle + d.endAngle) / 2); })
 		.attr("class", "outer-labels")
 		.attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
 		.attr("transform", function(d,i) { 
+			console.log("angle"+ d.angle)
 			var c = arc.centroid(d);
+			console.log("c");
+			var rotate, translate;
+			console.log(c);
+			if (d.angle * 180 / Math.PI  < 180){
+				rotate = d.angle * 180 / Math.PI;  
+				translate = -20;
+			}
+			else {
+				rotate = d.angle * 180 / Math.PI -180;
+				translate = 20;
+			}
+				
+			d.pullOutSize = 0
 			return "translate(" + (c[0] + d.pullOutSize) + "," + c[1] + ")"
-			+ "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-			+ "translate(" + 26 + ",0)"
+			+ "rotate(" + rotate +")"// - 90
+			+ "translate(0,"+translate+")"//26, 0
 			+ (d.angle > Math.PI ? "rotate(180)" : "")
 		})
 		
@@ -439,16 +465,16 @@ d3.json('lotr.json', function (error, dataAgg) {
 		.text(function(d,i){ return d.outername; });
 		
 	//The value below it
-	outerLabels.append("text")
+	/*outerLabels.append("text")
 		.attr("class", "outer-label-value")
 		.attr("dy", "1.5em")
-		.text(function(d,i){ return numFormat(d.value) + " words"; });
-*/
+		.text(function(d,i){ return numFormat(d.value); });*/
+
 	
 		
 	
 	  		
-});//d3.csv
+//});//d3.csv
 
 }
 
@@ -457,11 +483,51 @@ d3.json('lotr.json', function (error, dataAgg) {
 ///////////////////// Extra functions //////////////////////
 ////////////////////////////////////////////////////////////
 
+//Display where the probe is located relative to the transcript 
+function displayLocation(name){
+	$( ".probe" ).remove();
+
+	var spliceVariants= $(".SV").map(function() {
+	   return $(this).val();
+	}).get();
+
+	//var orgSplice = spliceVariants
+	console.log(spliceVariants);
+	var longestSeq = spliceVariants.sort(function (a, b) { return b.length - a.length; })[0];
+	console.log("longest" + longestSeq.length);
+
+	spliceVariants= $(".SV").map(function() {
+	   return $(this).val();
+	}).get();
+
+	var xScale = d3.scaleLinear()//scaleLinear v4
+        .domain(
+         	[0,longestSeq.length]
+        )
+        .range([0,580]);
+
+	var yloc = 10;
+	for(var i = 0; i < spliceVariants.length; i++){
+		
+		if(spliceVariants[i].indexOf(name) != -1){// if transcript contains the desired probe
+			d3.select("#svgT").append("rect")
+				            .attr("x", xScale(spliceVariants[i].indexOf(name)))
+				            .attr("y", yloc)
+				            .attr("width", xScale(name.length))
+				            .attr("height", 20)
+				            .attr("class", "probe")
+							.attr("fill", "rgb(228, 75, 75)");
+		}
+		yloc += 30;
+	}
+}
+
+
 //Sort alphabetically
 function sortAlpha(a, b){
-	    if(a < b) return -1;
-	    if(a > b) return 1;
-	    return 0;
+    if(a < b) return -1;
+    if(a > b) return 1;
+    return 0;
 }//sortAlpha
 
 //Sort on the number of words
