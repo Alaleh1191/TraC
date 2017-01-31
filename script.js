@@ -510,17 +510,35 @@ function displayLocation(name){
 	for(var i = 0; i < spliceVariants.length; i++){
 		
 		if(spliceVariants[i].indexOf(name) != -1){// if transcript contains the desired probe
-			d3.select("#svgT").append("rect")
-				            .attr("x", xScale(spliceVariants[i].indexOf(name)))
+			// for loop find all matches
+			var indices = indexes(spliceVariants[i],name);
+			for(j = 0; j < indices.length; j++){
+				d3.select("#svgT").append("rect")
+				            .attr("x", xScale(indices[j]))//spliceVariants[i].indexOf(name)
 				            .attr("y", yloc)
 				            .attr("width", xScale(name.length))
 				            .attr("height", 20)
 				            .attr("class", "probe")
 							.attr("fill", "rgb(228, 75, 75)");
+			}
+
+			
 		}
 		yloc += 30;
 	}
 }
+
+// find occurences of probe in a transcript
+function indexes(str, find) {
+  var regex = new RegExp(find, "g")
+  ,   result
+  ,   indices = [];
+  while ((result = regex.exec(str))) {
+    indices.push(result.index);
+  }
+  return indices;
+}
+
 
 
 //Sort alphabetically
