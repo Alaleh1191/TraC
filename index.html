@@ -305,10 +305,15 @@
 				    }
 				}
 
-				function addSV(){
-					$("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+numberOfSV+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class ='SV "+numberOfSV+"'  style='width: 525px;  height: 13px; margin-bottom: -5px'></textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class="+numberOfSV+" onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
-					numberOfSV++;
-				}
+                function addSV(name, sequence){
+                    if(name == null && sequence == null)
+                    {
+                        name = numberOfSV;
+                        sequence = '';
+                    }
+                    $("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+name+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class='SV "+numberOfSV+"' style='width: 525px;  height: 13px; margin-bottom: -5px'>"+sequence+"</textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class="+numberOfSV+" onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
+                    numberOfSV++;
+                }
 
 				function onFocus(sv){
 					//console.log($( "input[name='name"+sv.className+"']" ).val());
