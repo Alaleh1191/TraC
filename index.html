@@ -94,6 +94,9 @@
 
 
 			<script>
+
+                var transcriptsGlobal = [];
+
 				window.onload = (function() {
 				    var xhr = new XMLHttpRequest();
 				    xhr.open('GET', '//rest.ensembl.org/info/species?content-type=application/json');
@@ -130,13 +133,14 @@
 					xhr.onreadystatechange = (function() {
 					   if(xhr.status == 200 && xhr.readyState == 4)
 					   {
-							var transcripts = JSON.parse(xhr.responseText);
-							transcripts = transcripts['Transcript'];
+                           var transcripts = JSON.parse(xhr.responseText);
+                           transcripts = transcripts['Transcript'];
+                           transcriptsGlobal = transcripts;
 
 							transcriptsOptions = '';
 							for(var i = 0; i < transcripts.length; i++)
 							{
-								transcriptsOptions += '<option value="' + transcripts[i].id + '">' + transcripts[i].id + ' (' + transcripts[i].biotype + ')</option>';
+                                transcriptsOptions += '<option value="' + i + '">' + transcripts[i].id + ' (' + transcripts[i].biotype + ')</option>';
 							}
 
 							document.getElementById('transcripts').innerHTML = transcriptsOptions;
@@ -144,6 +148,7 @@
 					   else if(xhr.readyState == 4)
 					   {
 					       alert('Supplied Specie and Gene was not found');
+                           transcriptsGlobal = [];
 					   }
 					});
 
@@ -153,6 +158,42 @@
 				function searchForTranscript()
 				{
 					var transcript = document.getElementById('transcripts');
+                    transcript = transcript.options[transcript.selectedIndex].value;
+                    transcript = transcriptsGlobal[transcript];
+
+                    console.log('Transcript ID' + transcript['id'] + ' - Transcript Name: ' + transcript['display_name']);
+
+                    var exons = transcript['Exon'];
+                    console.log(exons);
+                    var exonIds = {};
+                    exonIds['ids'] = [];
+                    exonIds['format'] = 'JSON';
+
+                    for (var i = 0; i < exons.length; i++)
+                    {
+                        exonIds['ids'].push(exons[i]['id']);
+                    }
+
+                    exonIds = JSON.stringify(exonIds);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '//rest.ensembl.org/sequence/id');
+                    xhr.setRequestHeader("Content-Type", "text/plain");
+                    xhr.onreadystatechange = function() {
+                        if(xhr.readyState == 4 && xhr.status == 200)
+                        {
+                            var sequence = xhr.responseText;
+                            sequence = sequence.split("\n");
+                            sequence = sequence.join('');
+                            console.log(sequence);
+
+                            addSV(transcript['display_name'], sequence);
+
+
+                        }
+                    }
+
+                    xhr.send(exonIds);
 				}
 
 
