@@ -107,7 +107,7 @@ function searchForTranscript()
     xhr.open('POST', '//rest.ensembl.org/sequence/id');
     xhr.setRequestHeader("Content-Type", "text/plain");
 
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = (function() {
         if(xhr.readyState == 4 && xhr.status == 200)
         {
             var sequence = xhr.responseText;
@@ -127,8 +127,57 @@ function searchForTranscript()
             
 
         }
-    }
+    });
 
     $("#loading").remove();
     xhr.send(exonIds);
 }
+
+function allTranscriptsInSelectedGene()
+{
+
+    var xhr = [];
+
+    for (var i = 0; i < transcriptsGlobal.length; i++)
+    {
+        console.log(i);
+        console.log(transcriptsGlobal[i]);
+
+        var exons = transcriptsGlobal[i]['Exon'];
+
+        var exonIds = {};
+        exonIds['ids'] = [];
+        exonIds['format'] = 'JSON';
+
+        for (var a = 0; a < exons.length; a++)
+        {
+            exonIds['ids'].push(exons[a]['id']);
+        }
+
+        exonIds = JSON.stringify(exonIds);
+        (function (i) {
+            xhr[i] = new XMLHttpRequest();
+            xhr[i].open('POST', '//rest.ensembl.org/sequence/id');
+            xhr[i].setRequestHeader("Content-Type", "text/plain");
+
+            xhr[i].onreadystatechange = (function () {
+                if (xhr[i].readyState == 4 && xhr[i].status == 200) {
+                    var sequence = xhr[i].responseText;
+                    sequence = sequence.split("\n");
+                    sequence = sequence.join('');
+                    console.log(sequence);
+                    console.log("number of sv is"+numberOfSV);
+
+
+
+                }
+            });
+        }(i));
+
+        $("#loading").remove();
+        xhr[i].send(exonIds);
+
+
+    }
+}
+
