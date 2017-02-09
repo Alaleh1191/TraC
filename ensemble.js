@@ -168,7 +168,7 @@ function allTranscriptsInSelectedGene()
                     console.log(sequence);
                     console.log("number of sv is"+numberOfSV);
 
-
+                    addSV(transcriptsGlobal[i]['display_name'], sequence);
 
                 }
             });
