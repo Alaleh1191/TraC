@@ -1,34 +1,5 @@
 <!DOCTYPE html>
 	<head>
-	<style>
-
-		circle {
-		  fill: rgb(31, 119, 180);
-		  fill: rgb(228, 75, 75);
-		  fill-opacity: 1;
-		}
-
-		.leaf circle {
-		  fill: #ff7f0e;
-		  fill-opacity: 1;
-		}
-
-		text {
-		  font: 10px sans-serif;
-		  text-anchor: middle;
-		}
-
-		.overlay {
-		  fill: none;
-		  pointer-events: all;
-		}
-		.axis path, .axis line {
-    		fill: none;
-    		stroke: none;
-    		shape-rendering: crispEdges;
-		}
-		</style>
-		
 		<!-- Styling -->
 		<link href="style.css" rel="stylesheet">
 		
@@ -36,36 +7,48 @@
 		<script src="https://d3js.org/d3.v4.min.js"></script>
 		
 		<!-- Custom "chord" and "ribbon" functions -->
-		<script src="loom.js"></script>
+		<script src="arc.js"></script>
+		<script src="chord.js"></script>
+
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<script src="string.js"></script>
+		
 		<link href="flat/blue.css" rel="stylesheet">
 		<script src="icheck.js"></script>
 		<link href='//fonts.googleapis.com/css?family=Capriola' rel='stylesheet'>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 	</head>
 	<body>
 			<div>
 				<form>
 					<span>Please enter the sequence for transcript:</span><br/>
-					<div id = "SVs">
+					<div id = "SVs" style="position:relative">
 						<!--<span class= "1"> 1. </span>-->
 						<span class= "1"> Name: </span>
 						<input type="text" name="name1" class="1" value="1" onfocus="onFocus(this)" onblur="onBlur(this)">
 						<span class= "1"> Sequence: </span>
 						<textarea class ="SV 1" style="width: 525px;  height: 13px; margin-bottom: -5px"></textarea>
 						
-						<img class = "1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript"><!--http://tdyln.me/tdyln-0065-x-10-july-2015/ cite this-->
+						<img class = "del 1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript"><!--http://tdyln.me/tdyln-0065-x-10-july-2015/ cite this-->
 						<br class = "1"/>
 						<span class = "2"> Name: </span>
 						<input type="text" name="name2" class="2" value="2" onfocus="onFocus(this)" onblur="onBlur(this)">
 						<span class= "2"> Sequence: </span>
 						<textarea class ="SV 2"  style="width: 525px; height: 13px; margin-bottom: -5px"></textarea>
-						<img class ="2" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px">
+						<img class ="del 2" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px">
 						<br class = "2"/>
 					</div>
-					<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' height= "20px"/><br/>
+					<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' style="position: relative;" height= "20px"/><br class="addSV"/>
+					<span> Alternatively select a transcript by selecting a gene and species (ENSEMBLE):</span> <br/>
+					<span> Species: </span>
+					<select id="species"></select>
+					<span> Gene: </span>
+					<input type="text" id="gene"/>
+					<input type="button" value="Select Specie and Gene" class="button1" onclick="searchForGene();"/> <br/>
+					<select id="transcripts"></select>
+					<input type="button" value="Add Transcript to the list" class="button1" onclick="searchForTranscript();"/><br/>
 					<span>Please enter the minimum length of a share sequence: </span>
-					<input type="text" name="minLength" id='minLength' value="1" onfocus="if (this.value==1) this.value = ''" onblur="if (this.value=='') this.value = 1"><br/>
+					<input type="text" name="minLength" id='minLength' value="20" onfocus="if (this.value==20) this.value = ''" onblur="if (this.value=='') this.value = 20"><br/>
 					<span style="margin-right: 15px">Weight Probes by:</span>
 					<input type="radio" name="weight" value="length" checked> Length of the Probe <span style="margin-left: 15px"></span>
   					<input type="radio" name="weight" value="shared"> Number of Transcripts Containing the Probe<br>
@@ -73,14 +56,10 @@
 				</form>
 
 				<span>------- AND/OR --------</span>
-				<form>
-					<select id="species"></select>
-					<input type="text" id="gene"/>
-					<input type="button" value="Select Specie and Gene" onclick="searchForGene();"/>
-					<select id="transcripts"></select>
-					<input type="button" value="Add Transcript(s) to the list" onclick="searchForTranscript();"/>
-				</form>
-				<input type="button" value="Submit" onclick="chordData(); displayTranscripts();" class="btn btn-primary button">
+				<!--<form>
+					
+				</form> displayTranscripts();-->
+				<input type="button" value="Submit" onclick="chordData();" class="btn btn-primary button">
 			</div>
 
 
@@ -88,14 +67,15 @@
 			<div id="sv-chart" style="width: 700px; float: left; position: absolute;"></div>
 			<div style="width: 500px; margin-left: 750px;" id="probeLoc">  </div>
 
-			<div id="title" style="width: 500px; margin-left: 750px; word-wrap: break-word"> Please click on the probe to get its sequence </div>
+			<div id="title" style="display: none;text-anchor: middle;width: 500px; margin-left: 750px; word-wrap: break-word"> Please click on the probe to get its sequence </div>
 
 			<script src="script.js"></script>
 
 
 			<script>
 
-                var transcriptsGlobal = [];
+             /*   var transcriptsGlobal = [];
+
 
 				window.onload = (function() {
 				    var xhr = new XMLHttpRequest();
@@ -117,6 +97,8 @@
 						}
 					});
 					xhr.send();
+					$('select').select2();
+					$(".select2").removeAttr("style");
 				});
 
 				function searchForGene()
@@ -125,8 +107,6 @@
 					specie = specie.options[specie.selectedIndex].value;
 
 					var gene = document.getElementById('gene').value;
-
-					//console.log('Selected Specie:' + specie + ': Selected Gene: ' + gene);
 
 					var xhr = new XMLHttpRequest();
 					xhr.open('GET', '//rest.ensembl.org/lookup/symbol/'+specie+'/'+gene+'?content-type=application/json;expand=1');
@@ -140,7 +120,9 @@
 							transcriptsOptions = '';
 							for(var i = 0; i < transcripts.length; i++)
 							{
-                                transcriptsOptions += '<option value="' + i + '">' + transcripts[i].id + ' (' + transcripts[i].biotype + ')</option>';
+								console.log("transcript info");
+								console.log(transcripts[i])
+                                transcriptsOptions += '<option value="' + i + '">' + transcripts[i].display_name + ' (' + transcripts[i].biotype + ')</option>';
 							}
 
 							document.getElementById('transcripts').innerHTML = transcriptsOptions;
@@ -157,6 +139,20 @@
 
 				function searchForTranscript()
 				{
+					var placed = -1;
+					for(var i=1; i < numberOfSV; i++){
+                        if($(".SV."+i).val() == ""){
+                        	placed = i;
+                        	break;
+                        }
+                    }
+                    if(placed != -1){
+                    	$(".del."+(placed-1)).css("position", "relative");
+                    	$("br."+placed).before("<img id='loading' src='Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -25px; margin-left: -58px;margin-top: -37px;' /> ");
+                    } else{
+                    	$("br.addSV").before("<img id='loading' src='Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -19px; margin-left: -25px;margin-top: -35px;' /> ")
+                    }
+                    
 					var transcript = document.getElementById('transcripts');
                     transcript = transcript.options[transcript.selectedIndex].value;
                     transcript = transcriptsGlobal[transcript];
@@ -186,16 +182,25 @@
                             sequence = sequence.split("\n");
                             sequence = sequence.join('');
                             console.log(sequence);
-
-                            addSV(transcript['display_name'], sequence);
-
+                            console.log("number of sv is"+numberOfSV);
+                            
+                            $("#loading").remove();
+                            if(placed == -1){
+                            	addSV(transcript['display_name'], sequence);
+                            } else {
+                            	$(".SV."+placed).val(sequence);
+                        		$( "input[name='name"+placed+"']" ).val(transcript['display_name']);
+                        		//$("br."+i).before("<img src='Loading_icon.gif' alt='loading'")
+                        		
+                            }
+                            
 
                         }
                     }
 
                     xhr.send(exonIds);
 				}
-
+*/
 
 			</script>
 
@@ -212,6 +217,7 @@
 				numberOfSV = 3;
 
 				function displayTranscripts(){
+					$("#title").css("display","block");
 					$("#probeLoc").empty();
 
 					var spliceVariants= $(".SV").map(function() {
@@ -243,7 +249,7 @@
 				    var svg = d3.select("#probeLoc")
 							.append("svg")
 							.attr("id", "svgT")
-							.attr("width", "600px")
+							.attr("width", "700px")
 							.attr("class" , "svg")
 							.attr("height", height)
 							.append("g")
@@ -273,7 +279,7 @@
 
 					svg.append("rect")
 					    .attr("class", "overlay")
-					    .attr("width", width)
+					    .attr("width", "700px")
 					    .attr("height", height);
 
 					var text = svg.append("g").attr("class", "text");
@@ -311,7 +317,7 @@
                         name = numberOfSV;
                         sequence = '';
                     }
-                    $("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+name+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class='SV "+numberOfSV+"' style='width: 525px;  height: 13px; margin-bottom: -5px'>"+sequence+"</textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class="+numberOfSV+" onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
+                    $("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+name+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class='SV "+numberOfSV+"' style='width: 525px;  height: 13px; margin-bottom: -5px'>"+sequence+"</textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class='del "+numberOfSV+"' onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
                     numberOfSV++;
                 }
 
@@ -330,6 +336,7 @@
 				}
 				function removeSV(sv){
 					sv = sv.className;
+					sv = sv.match(/\d+/)[0]; //get the number
 					var remove = "."+sv
 					$(remove).remove();
 					//console.log("num" + numberOfSV);
@@ -640,8 +647,9 @@
 				//	console.log(weightedByLength);
 					if(chordData.length != 0){
 						drawChord(chordData, weightedByLength);
+						displayTranscripts();
 					} else {
-						$("#results").html("no SVs of desired min length was found")
+						$("#results").html("no SVs of desired min length was found");
 					}
 
 				}
@@ -694,6 +702,6 @@
 				}
 
 			</script>
-		
+			<script type="text/javascript" src="ensemble.js"></script>
 	</body>
 </html>

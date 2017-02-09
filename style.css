@@ -8,13 +8,55 @@ body {
 .button {
 padding: 2px 5px 2px 5px;
     border: 3px solid #3498db;
-    border-radius: 10px;
+    border-radius: 7px;
     background-color: white;
     color: #3498db;
     text-decoration: none;
     font-weight: bold;
     cursor: pointer;
+    margin-top: 7px;
     font-size: 14px;
+}
+
+circle {
+  fill: rgb(31, 119, 180);
+  fill: rgb(228, 75, 75);
+  fill-opacity: 1;
+}
+
+.leaf circle {
+  fill: #ff7f0e;
+  fill-opacity: 1;
+}
+
+/*text.outer-label{
+  font: 10px sans-serif;
+  text-anchor: middle;
+}*/
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+.axis path, .axis line {
+	fill: none;
+	stroke: none;
+	shape-rendering: crispEdges;
+}
+.SV{
+	position: relative;
+}
+.button1 {
+padding: 2px 5px 2px 5px;
+    border: 3px solid #1abc9c;
+    border-radius: 7px;
+    background-color: white;
+    color: #1abc9c;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 7px;
+    font-size: 12px;
 }
 
 .lotr-content-wrapper {
@@ -119,6 +161,7 @@ a, a:link, a:visited, a:active {
 	font-size: 1.6rem;
 	fill: #5f5f5f;
 	cursor: default;
+	text-anchor: middle;
 }
 
 .outer-label-value {
