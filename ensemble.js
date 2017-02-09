@@ -42,7 +42,7 @@ function searchForGene()
            transcripts = transcripts['Transcript'];
            transcriptsGlobal = transcripts;
 
-			transcriptsOptions = '';
+			transcriptsOptions = '<option value="All" >All Transcripts</option>';
 			for(var i = 0; i < transcripts.length; i++)
 			{
 				console.log("transcript info");
@@ -65,6 +65,17 @@ function searchForGene()
 /* Add the selected transcripts to the list*/
 function searchForTranscript()
 {
+
+    //Retrieve the sequence of the chosen transcript
+    var transcript = document.getElementById('transcripts');
+    transcript = transcript.options[transcript.selectedIndex].value;
+
+    if(transcript == 'All')
+    {
+        allTranscriptsInSelectedGene();
+        return;
+    }
+
 	var placed = -1; // -1 if needed to create a new row
 
     // check for unfilled sequences
@@ -82,10 +93,7 @@ function searchForTranscript()
     } else {
     	$("br.addSV").before("<img id='loading' src='Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -19px; margin-left: -25px;margin-top: -35px;' /> ")
     }
-    
-    //Retrieve the sequence of the chosen transcript
-	var transcript = document.getElementById('transcripts');
-    transcript = transcript.options[transcript.selectedIndex].value;
+
     transcript = transcriptsGlobal[transcript];
 
     console.log('Transcript ID' + transcript['id'] + ' - Transcript Name: ' + transcript['display_name']);
