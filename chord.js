@@ -1,6 +1,7 @@
 /*
 ** Based on the d3v4 d3.ribbon() function by Mike Bostock
 ** Adjusted by Nadieh Bremer - July 2016
+** Further modified by Alaleh Azhir
 */
 function string() {
 
@@ -20,7 +21,6 @@ function string() {
       endAngle = function (d) { return d.endAngle; },
   	  x = function (d) { return d.x; },
   	  y = function (d) { return d.y; },
-  	  //offset = function (d) { return d.offset; },
       offset = function(d) {return 0},
   	  pullout = 50,
   	  heightInner = 0, 

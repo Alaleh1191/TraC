@@ -1,6 +1,7 @@
 /*
 ** Based on the d3v4 d3.chord() function by Mike Bostock
 ** Adjusted by Nadieh Bremer - July 2016
+** Further modified by Alaleh Azhir
 */
 function loom() {
 	
@@ -15,7 +16,6 @@ function loom() {
   	  heightInner = 20,
   	  widthOffsetInner = function() { return x; },
   	  emptyPerc = 0.2,
-  	// emptyPerc = 0,
   	  value = function(d) { return d; },
 	  inner = function(d) { return d.source; },
   	  outer = function(d) { return d.target; };
@@ -158,7 +158,7 @@ function loom() {
 		uniqueInner[i].x = 0;
 		uniqueInner[i].y = -m*heightInner/2 + i*heightInner;
 		uniqueInner[i].offset = widthOffsetInner(uniqueInner[i].name, i, uniqueInner);
-	}//for i
+	}
   			
     //Generate bands for each (non-empty) subgroup-subgroup link
 	counter = 0;
