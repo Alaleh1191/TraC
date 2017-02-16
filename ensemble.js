@@ -45,8 +45,6 @@ function searchForGene()
 			transcriptsOptions = '<option value="All" >All Transcripts</option>';
 			for(var i = 0; i < transcripts.length; i++)
 			{
-				console.log("transcript info");
-				console.log(transcripts[i])
                 transcriptsOptions += '<option value="' + i + '">' + transcripts[i].display_name + ' (' + transcripts[i].biotype + ')</option>';
 			}
 
@@ -96,10 +94,8 @@ function searchForTranscript()
 
     transcript = transcriptsGlobal[transcript];
 
-    console.log('Transcript ID' + transcript['id'] + ' - Transcript Name: ' + transcript['display_name']);
 
     var exons = transcript['Exon'];
-    console.log(exons);
     var exonIds = {};
     exonIds['ids'] = [];
     exonIds['format'] = 'JSON';
@@ -120,10 +116,7 @@ function searchForTranscript()
         {
             var sequence = xhr.responseText;
             sequence = sequence.split("\n");
-            sequence = sequence.join('');
-            console.log(sequence);
-            console.log("number of sv is"+numberOfSV);
-            
+            sequence = sequence.join('');            
             $("#loading").remove();
             if(placed == -1){
             	addSV(transcript['display_name'], sequence);
@@ -148,9 +141,6 @@ function allTranscriptsInSelectedGene()
 
     for (var i = 0; i < transcriptsGlobal.length; i++)
     {
-        console.log(i);
-        console.log(transcriptsGlobal[i]);
-
         var exons = transcriptsGlobal[i]['Exon'];
 
         var exonIds = {};
@@ -173,8 +163,6 @@ function allTranscriptsInSelectedGene()
                     var sequence = xhr[i].responseText;
                     sequence = sequence.split("\n");
                     sequence = sequence.join('');
-                    console.log(sequence);
-                    console.log("number of sv is"+numberOfSV);
 
                     addSV(transcriptsGlobal[i]['display_name'], sequence);
 

@@ -127,8 +127,6 @@ given array */
 function findProbes(sv){
 
 	var spliceVariants = sv;
-	console.log("replace error!");
-	console.log(spliceVariants);
 	var minLength = Number($("#minLength").val());
 
 	var numVariants = spliceVariants.length;
@@ -270,7 +268,6 @@ function chordData(){
 	var probes, uniqueProbes = [], temp;
 	while (indexComb < arrComb.length){
 		var comb = arrComb[indexComb];
-		console.log(comb);
 		var last = comb[comb.length - 1];
 			for(var j = last+1; j < sequences.length; j++){
 				probes = [];

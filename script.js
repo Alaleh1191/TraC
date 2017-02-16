@@ -114,7 +114,6 @@ var svg = d3.select("#sv-chart").append("svg")
 	    		inner = arr.find(x => x.name === strings[i].inner.name)
 	    		strings[i].inner = arr.find(x => x.name === strings[i].inner.name);
 	    	}
-	    	console.log(strings);
 			return strings; 
 		})
 	  	.enter().append("path")
@@ -129,7 +128,7 @@ var svg = d3.select("#sv-chart").append("svg")
 		    .data(pack(root).descendants())
 		    .enter().append("g")
 		    .attr("class", function(d) { return d.children ? "node" : "leaf node"; })
-		    .attr("transform", function(d) { return "translate(" + (d.x - 129) + "," + (d.y -129) + ")"; });
+		    .attr("transform", function(d) { console.log("translate" + (d.x-129)); return "translate(" + (d.x - 129) + "," + (d.y -129) + ")"; });
 
 	   	var innerLabels = g.append("g")
 	  	.selectAll("text")
@@ -151,8 +150,6 @@ var svg = d3.select("#sv-chart").append("svg")
 			d3.selectAll(".inner-labels")
 		      	.transition()
 		        .style("opacity", function(s) {
-		        	console.log(s.name)
-		        	console.log(d.name)
 					return s.name == d.name ? 1: fadeOpacity;
 				});
 				
@@ -242,10 +239,6 @@ var svg = d3.select("#sv-chart").append("svg")
  	 		d3.selectAll(".inner-labels")
 		      	.transition()
 		        .style("opacity", function(s) {
-		        	console.log(s.name)
-		        	console.log(d)
-		        	console.log(s)
-		        	console.log(d.outername)
 					var char = locationData.filter(function(c) { return c.outer.innername === s.name; });
 					return char.length === 0 ? 0.1 : 1;
 
@@ -256,7 +249,6 @@ var svg = d3.select("#sv-chart").append("svg")
 			d3.selectAll(".arc-wrapper")
 		      	.transition()
 				.style("opacity", function(s) {
-					//console.log(s);
 				 	return s.outername === d.outername ? 1 : 0.5; 
 				 });
 			
@@ -313,11 +305,8 @@ var svg = d3.select("#sv-chart").append("svg")
 		.attr("class", "outer-labels")
 		.attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
 		.attr("transform", function(d,i) { 
-			console.log("angle"+ d.angle)
 			var c = arc.centroid(d);
-			console.log("c");
 			var rotate, translate;
-			console.log(c);
 			if (d.angle * 180 / Math.PI  < 180){
 				rotate = d.angle * 180 / Math.PI;  
 				translate = -20;
@@ -354,10 +343,7 @@ function displayLocation(name){
 	   return $(this).val();
 	}).get();
 
-	//var orgSplice = spliceVariants
-	console.log(spliceVariants);
 	var longestSeq = spliceVariants.sort(function (a, b) { return b.length - a.length; })[0];
-	console.log("longest" + longestSeq.length);
 
 	spliceVariants= $(".SV").map(function() {
 	   return $(this).val();
