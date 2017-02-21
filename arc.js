@@ -148,9 +148,9 @@ function loom() {
 	}//for i
 
 	//Sort the inner groups in the same way as the strings
-  	uniqueInner.sort(function(a, b) {
+  	/*uniqueInner.sort(function(a, b) {
     	return sortSubgroups( a.name, b.name );
-  	});
+  	});*/
 	//Find x and y locations of the inner categories
 	//TODO: make x depend on length of inner name	
 	m = uniqueInner.length
