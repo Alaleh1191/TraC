@@ -28,8 +28,8 @@
 						<input type="text" name="name1" class="1" value="1" onfocus="onFocus(this)" onblur="onBlur(this)">
 						<span class= "1"> Sequence: </span>
 						<textarea class ="SV 1" style="width: 525px;  height: 13px; margin-bottom: -5px"></textarea>
-						
-						<img class = "del 1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript"><!--http://tdyln.me/tdyln-0065-x-10-july-2015/ cite this-->
+						<!-- these images are taken from http://tdyln.me/tdyln-0065-x-10-july-2015/-->
+						<img class = "del 1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript">
 						<br class = "1"/>
 						<span class = "2"> Name: </span>
 						<input type="text" name="name2" class="2" value="2" onfocus="onFocus(this)" onblur="onBlur(this)">
@@ -51,8 +51,7 @@
 					<input type="text" name="minLength" id='minLength' value="20" onfocus="if (this.value==20) this.value = ''" onblur="if (this.value=='') this.value = 20"><br/>
 					<span style="margin-right: 15px">Weight Probes by:</span>
 					<input type="radio" name="weight" value="length" checked> Length of the Probe <span style="margin-left: 15px"></span>
-  					<input type="radio" name="weight" value="shared"> Number of Transcripts Containing the Probe<br>
-					<span> Input a desired probe sequence (Optional): </span>
+  					<input type="radio" name="weight" value="shared"> Number of Transcripts Containing the Probe<br/>
 				</form>
 				<input type="button" value="Submit" onclick="chordData();" class="btn btn-primary button">
 			</div>
@@ -65,7 +64,7 @@
 			<div id="title" style="display: none;text-anchor: middle;width: 500px; margin-left: 750px; word-wrap: break-word"> Please click on the probe to get its sequence </div>
 
 			<script src="script.js"></script>
-			<script src="sc.js"></script>
+			<script src="diagram.js"></script>
 
 			<script type="text/javascript" src="ensemble.js"></script>
 			<script>
