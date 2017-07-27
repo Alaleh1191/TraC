@@ -150,7 +150,8 @@ function allTranscriptsInSelectedGene()
     // remove all unfilled sequences
     for(var i=1; i < numberOfSV; i++){
         if($(".SV."+i).val() == "") {
-            $("."+i).remove();
+            removeSV(document.getElementsByClassName(i)[4]);
+            i--; //decrement i because removeSV moves everything up
         }
     }
 
@@ -187,8 +188,6 @@ function allTranscriptsInSelectedGene()
 
         $("#loading").remove();
         xhr[i].send(exonIds);
-
-
     }
 }
 
