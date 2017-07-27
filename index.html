@@ -47,13 +47,24 @@
 				</form>
 				<input type="button" value="Submit" onclick="chordData();" class="btn btn-primary button">
 			</div>
-
+				<!-- Special Thanks to https://www.behance.net/gallery/31234507/Free-Loading-Icons-Vol-1 -->
+				<div style="margin-top:10px;margin-left:5px;display:none;" id="loadingChord">
+					<img src="gif/Skate-128px.gif" alt="Skate" style="float:left;"/>
+					<img src="gif/Replace-128px.gif" alt="Replace" style="float:left;margin-left:10px;"/>
+					<img src="gif/Jumbing-Balls-128px.gif" alt="Jumping Balls" style="float:left; margin-left:10px;"/>
+					<img src="gif/Puzzle-128px.gif" alt="Puzzle" style="float:left; margin-left:10px;"/>
+					<img src="gif/Orbit-128px.gif" alt="Orbit" style="float:left; margin-left:10px;"/>
+				</div>
 
 			<div  style="width: 525px;white-space: pre-wrap;word-wrap: break-word;"><span id = "results"></span></div>
 			<div id="sv-chart" style="width: 700px; float: left; position: absolute;"></div>
 			<div style="width: 500px; margin-left: 750px;" id="probeLoc">  </div>
 
-			<div id="title" style="display: none;text-anchor: middle;width: 500px; margin-left: 750px; word-wrap: break-word"> Please click on the probe to get its sequence </div>
+			<div style="margin-left: 750px; ">
+				<span style="display:none;" id="title_probe">Probe:</span>
+				<span style="display:none;" id="title">Please click on the probe to get its sequence</span>
+				<textarea id="probe" style="display: none;text-anchor: middle;width: 500px; height:400px; word-wrap: break-word" readonly></textarea>
+			</div>
 
 			<script src="jquery-1.12.4.min.js"></script>
 

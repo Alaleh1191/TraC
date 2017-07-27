@@ -145,7 +145,8 @@ var svg = d3.select("#sv-chart").append("svg")
 
 		})
 		.on("click", function(d) {
-			d3.select("#title").html("Probe: "+ d.name);
+            d3.select("#title").style('display', 'block').html('Probe:');
+            d3.select("#probe").style('display', 'block').html(d.name);
 			displayLocation(d.name);
 		})
      	.on("mouseout", function(d) {

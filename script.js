@@ -126,6 +126,7 @@ function chordData()
 {
     $("#results").empty();
     $("#sv-chart").empty();
+    $("#loadingChord").css('display', 'block');
 
     var sequences = $(".SV").map(function() {
         return $(this).val();
@@ -144,6 +145,8 @@ function chordData()
         	[arrComb, arrSharedSeqs] = e.data;
 
             makeJsonData(arrComb, arrSharedSeqs);
+
+            $("#loadingChord").css('display', 'none');
         };
 
         return;
@@ -152,6 +155,8 @@ function chordData()
     [arrComb, arrSharedSeqs] = chordComputation(sequences, minLength);
 
     makeJsonData(arrComb, arrSharedSeqs);
+
+    $("#loadingChord").css('display', 'none');
 }
 
 //Convert the shared probes among different splice variants into JSON format
