@@ -109,7 +109,7 @@ function searchForTranscript()
     exonIds['ids'] = [];
     exonIds['format'] = 'JSON';
 
-    for (var i = 0; i < exons.length; i++)
+    for (i = 0; i < exons.length; i++)
     {
         exonIds['ids'].push(exons[i]['id']);
     }
@@ -145,10 +145,16 @@ function searchForTranscript()
 
 function allTranscriptsInSelectedGene()
 {
-
     var xhr = [];
 
-    for (var i = 0; i < transcriptsGlobal.length; i++)
+    // remove all unfilled sequences
+    for(var i=1; i < numberOfSV; i++){
+        if($(".SV."+i).val() == "") {
+            $("."+i).remove();
+        }
+    }
+
+    for (i = 0; i < transcriptsGlobal.length; i++)
     {
         var exons = transcriptsGlobal[i]['Exon'];
 
