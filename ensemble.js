@@ -1,4 +1,5 @@
 var transcriptsGlobal = [];
+var topOfSpeciesList = ['Human', 'Mouse'];
 
 /* load the species drop down by retrieving it from ensemble. */
 window.onload = (function() {
@@ -13,7 +14,15 @@ window.onload = (function() {
 			var speciesOptions = '';
 			for(var i = 0; i < species.length; i++)
 			{
-				speciesOptions += '<option value="' + species[i].name + '">' + species[i].display_name + '</option>';
+			    var option = '<option value="' + species[i].name + '">' + species[i].display_name + '</option>';
+
+			    //By default, Human and Mouse should be on the top of the list
+			    if(topOfSpeciesList.includes(species[i].display_name))
+                {
+                    speciesOptions = option + speciesOptions;
+                }
+
+				speciesOptions += option;
 			}
 
 			document.getElementById('species').innerHTML = speciesOptions;
