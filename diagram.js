@@ -105,7 +105,7 @@ var svg = d3.select("#sv-chart").append("svg")
 	    .data(pack(root).descendants())
 	    .enter().append("g")
 	    .attr("class", function(d) { return d.children ? "node" : "leaf node"; })
-	    .attr("transform", function(d) { console.log("translate" + (d.x-129)); return "translate(" + (d.x - 129) + "," + (d.y -129) + ")"; });
+	    .attr("transform", function(d) { return "translate(" + (d.x - 129) + "," + (d.y -129) + ")"; });
 
 	var innerLabels = g.append("g")
 	  	.selectAll("text")
