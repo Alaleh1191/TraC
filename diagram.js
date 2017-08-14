@@ -281,10 +281,12 @@ function displayLocation(name){
         .range([0,580]);
 
 	var yloc = 10;
+	var found = false;
 	for(var i = 0; i < spliceVariants.length; i++){
 		
 		if(spliceVariants[i].indexOf(name) != -1){// if transcript contains the desired probe
 			// for loop find all matches
+			found = true;
 			var indices = indexes(spliceVariants[i],name);
 			for(j = 0; j < indices.length; j++){
 				d3.select("#svgT").append("rect")
@@ -300,6 +302,7 @@ function displayLocation(name){
 		}
 		yloc += 30;
 	}
+	return found; 
 }
 
 // find occurences of probe in a transcript

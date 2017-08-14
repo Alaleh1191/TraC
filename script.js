@@ -9,8 +9,12 @@ $(document).ready(function(){
 numberOfSV = 3;
 
 //Draw tracks 
-function displayTranscripts(){
-	$("#title").css("display","block");
+function displayTranscripts(x){
+	if(!x){
+		$("#probeLoc").css("margin-left","750px");
+		$("#title").css("display","block");
+	}
+
 	$("#probeLoc").empty();
 
 	var spliceVariants= $(".SV").map(function() {
@@ -78,6 +82,7 @@ function displayTranscripts(){
 
         yloc += 30;
     }
+	
 }
 
 // Add a new splice variants with the given name and sequence
@@ -126,11 +131,30 @@ function chordData()
 {
     $("#results").empty();
     $("#sv-chart").empty();
+    $("#probeLoc").empty();
     $("#loadingChord").css('display', 'block');
+	
+	var reverse = $("#reverse").val();
+	if(reverse != ""){
+		$("#probeLoc").css("margin-left","0px");
+		$("#title").css("display","none");
+		$("#probe").css("display","none");
+		displayTranscripts(1);
+		var found = displayLocation(reverse);
+		if(!found){
+			$("#probeLoc").empty();
+			$("#results").html("None of the transcripts share the given subsequence. To find shared subsequences, please empty the optional subsequence textbox and resubmit");
+		}
+		$("#loadingChord").css('display', 'none');
+		return;
+	}
+
 
     var sequences = $(".SV").map(function() {
         return $(this).val();
     }).get();
+
+
 
     var minLength = Number($("#minLength").val());
 
@@ -212,7 +236,7 @@ function makeJsonData(combs, sharedSeqs){
 	weightedByLength = {"children": temp2};
 	if(chordData.length != 0){
 		drawChord(chordData, weightedByLength);
-		displayTranscripts();
+		displayTranscripts(0);
 	} else {
 		$("#results").html("no SVs of desired min length was found");
 	}
