@@ -12,41 +12,55 @@
 	</head>
 	<body>
 		<h1 style="margin:auto;text-align:center;">TraC: Transcript Consensus</h1>
-		<p style="margin:auto;text-align: center;">TraC is a tool for finding consensus sites in splice variants of a single gene or a set of closely related genes.  Splice variants and sequences are drawn from the <a href="http://www.ensembl.org"> Ensembl</a> database.  The algorithm is described in a manuscript in preparation.</p>
+		<p style="margin:auto;text-align: center; font-size: 15px;">TraC is a tool for finding consensus sites in splice variants of a single gene or a set of closely related genes.  Splice variants and sequences are drawn from the <a href="http://www.ensembl.org"> Ensembl</a> database.  The algorithm is described in a manuscript in preparation.</p>
 			<div>
-				<form>
-					<span>Please enter the sequence for transcript:</span><br/>
-					<div id = "SVs" style="position:relative">
-						<span class= "1"> Name: </span>
-						<input type="text" name="name1" class="1" value="1" onfocus="onFocus(this)" onblur="onBlur(this)">
-						<span class= "1"> Sequence: </span>
-						<textarea class ="SV 1" style="width: 525px;  height: 13px; margin-bottom: -5px"></textarea>
-						<!-- these images are taken from http://tdyln.me/tdyln-0065-x-10-july-2015/-->
-						<img class = "del 1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript">
-						<br class = "1"/>
-						<span class = "2"> Name: </span>
-						<input type="text" name="name2" class="2" value="2" onfocus="onFocus(this)" onblur="onBlur(this)">
-						<span class= "2"> Sequence: </span>
-						<textarea class ="SV 2"  style="width: 525px; height: 13px; margin-bottom: -5px"></textarea>
-						<img class ="del 2" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px">
-						<br class = "2"/>
+				<form style="margin-top: 15px; margin-bottom: 15px">
+					<span style="font-size: 18px;margin-left: 5px;font-weight: bold;">Step 1: Transcript entry or upload</span>
+				    <div style="border: 3px solid rgb(20, 160, 194); border-radius: 10px; padding: 5px; margin-bottom: 15px">
+						<!--<span>Please enter the sequence for transcripts:</span><br/>-->
+						<span style="font-weight: bold"> Select a transcript by selecting a gene and species (ENSEMBL):</span> <br/>
+						<span> Species: </span>
+						<select id="species"></select>
+						<span> Gene: </span>
+						<input type="text" id="gene"/>
+						<input type="button" value="Select Species and Gene" class="button1" onclick="searchForGene();"/> <br/>
+						<select id="transcripts"></select>
+						<input type="button" value="Add Transcript to the list" style="margin-bottom: 12px" class="button1" onclick="searchForTranscript();"/><br/>
+						<span style="font-weight: bold">And/Or enter the sequences below:</span><br/>
+						<div id = "SVs" style="position:relative">
+							<span class= "1"> Name: </span>
+							<input type="text" name="name1" class="1" value="1" onfocus="onFocus(this)" onblur="onBlur(this)">
+							<span class= "1"> Sequence: </span>
+							<textarea class ="SV 1" style="width: 525px;  height: 13px; margin-bottom: -5px"></textarea>
+							<!-- these images are taken from http://tdyln.me/tdyln-0065-x-10-july-2015/-->
+							<img class = "del 1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript">
+							<br class = "1"/>
+							<span class = "2"> Name: </span>
+							<input type="text" name="name2" class="2" value="2" onfocus="onFocus(this)" onblur="onBlur(this)">
+							<span class= "2"> Sequence: </span>
+							<textarea class ="SV 2"  style="width: 525px; height: 13px; margin-bottom: -5px"></textarea>
+							<img class ="del 2" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px">
+							<br class = "2"/>
+						</div>
+						<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' style="position: relative;" title="add transcript" height= "20px"/><br class="addSV"/>
+						
 					</div>
-					<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' style="position: relative;" height= "20px"/><br class="addSV"/>
-					<span> Alternatively select a transcript by selecting a gene and species (ENSEMBL):</span> <br/>
-					<span> Species: </span>
-					<select id="species"></select>
-					<span> Gene: </span>
-					<input type="text" id="gene"/>
-					<input type="button" value="Select Species and Gene" class="button1" onclick="searchForGene();"/> <br/>
-					<select id="transcripts"></select>
-					<input type="button" value="Add Transcript to the list" class="button1" onclick="searchForTranscript();"/><br/>
-					<span>Please enter the minimum length of a share sequence: </span>
-					<input type="text" name="minLength" id='minLength' value="20" onfocus="if (this.value==20) this.value = ''" onblur="if (this.value=='') this.value = 20"><br/>
-					<span style="margin-right: 15px">Weight Probes by:</span>
-					<input type="radio" name="weight" value="length" checked> Length of the Probe <span style="margin-left: 15px"></span>
-  					<input type="radio" name="weight" value="shared"> Number of Transcripts Containing the Probe<br/>
-  					<span>(Optional) Check to see if this subsequence is shared among any of the given transcripts:</span>
-					<textarea id="reverse" style="width: 525px;  height: 13px; margin-bottom: -5px"></textarea>
+					<span style="font-size: 18px;margin-left: 5px;font-weight: bold;">Step 2: Specifications</span>
+					<div style="border: 3px solid rgb(234, 112, 111); border-radius: 10px; padding: 5px;"> 
+						<span class="fade" style="font-weight: bold">Find all shared Sequences:</span><br/>
+						<span class="fade">Please enter the minimum length of a shared sequence: </span>
+						<input class ="fade" type="text" name="minLength" id='minLength' value="20" onfocus="if (this.value==20) this.value = ''" onblur="if (this.value=='') this.value = 20"><br/>
+						<span class="fade" style="margin-right: 15px">Weight Probes by:</span>
+						<div class="fade" style="display: inline-block;margin-bottom: 10px">
+							<input type="radio" name="weight" value="length" checked> Length of the Probe <span style="margin-left: 15px"></span>
+	  						<input type="radio" name="weight" value="shared"> Number of Transcripts Containing the Probe
+	  					</div>
+	  					<br/>
+	  					<span style="font-weight: bold">Or check for a specific subsequence:</span><br/>
+	  					<span>Check to see if this subsequence is shared among any of the given transcripts:</span>
+					    <textarea id="reverse" style="width: 525px;  height: 13px; margin-bottom: -5px" onkeyup="fade();"></textarea>
+  					</div>
+  					
 				</form>
 				<input type="button" value="Submit" onclick="chordData();" class="btn btn-primary button">
 			</div>

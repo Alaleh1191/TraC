@@ -127,11 +127,23 @@ function removeSV(sv){
 	numberOfSV--;
 }
 
+function fade(){
+	if($("#reverse").val() != ""){
+		$(".fade").css("opacity","0.5");
+		$(".fade2").css("display","none");
+	} else {
+		$(".fade").css("opacity","1");
+		$(".fade2").css("display","block");
+	}
+}
+
 function chordData()
 {
     $("#results").empty();
     $("#sv-chart").empty();
     $("#probeLoc").empty();
+    $("#title").css("display","none");
+	$("#probe").css("display","none");
     $("#loadingChord").css('display', 'block');
 	
 	var reverse = $("#reverse").val();
@@ -141,9 +153,10 @@ function chordData()
 		$("#probe").css("display","none");
 		displayTranscripts(1);
 		var found = displayLocation(reverse);
+		$("#results").html("the red rectangles correspond to the location of the given subsequence");
 		if(!found){
 			$("#probeLoc").empty();
-			$("#results").html("None of the transcripts share the given subsequence. To find shared subsequences, please empty the optional subsequence textbox and resubmit");
+			$("#results").html("None of the transcripts share the given subsequence. To find all shared subsequences, please empty the subsequence textbox and resubmit.");
 		}
 		$("#loadingChord").css('display', 'none');
 		return;
