@@ -5,3 +5,7 @@ TraC is a tool for finding consensus sites in splice variants of a single gene o
 # Credit
 
 Alaleh Azhir, Louis-Henri Merino, Dr. David Nauen
+
+# Demo
+
+![TraC Demo](/gif/TraC-Demo.gif?raw=true "TraC Demo")
