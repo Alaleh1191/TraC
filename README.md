@@ -8,4 +8,6 @@ Alaleh Azhir, Louis-Henri Merino, Dr. David Nauen
 
 # Demo
 
-![TraC Demo](/gif/TraC-Demo.gif?raw=true "TraC Demo")
+<p align="center">
+    <img src="https://github.com/Alaleh1191/TraC/blob/master/gif/TraC-Demo.gif?raw=true" alt="TraC GIF Demo"/>
+</p>
