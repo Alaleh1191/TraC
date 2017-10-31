@@ -61,6 +61,9 @@ function displayTranscripts(x){
 	var text = svg.append("g").attr("class", "text");
 	var yloc = 10;
 
+	//delete this when actual array arrives
+	var someARRay = [[20,40],[30]];
+
 	for(var i = 0; i < spliceVariants.length; i++){
 		var name = $( "input[name='name"+(i+1)+"']" ).val();
 		svg.append("rect")
@@ -70,6 +73,20 @@ function displayTranscripts(x){
             .attr("height", 20)
             .style("opacity", 0.85)
 			.attr("fill", color(name));
+
+			//go through exons, mark them if they exist
+			var length = 0;
+			for(var j=0; j < someARRay[i].length-1; j++){
+				//draw the exon boundary
+				length += someARRay[i][j];
+				svg.append("rect")
+	            .attr("x", length)
+	            .attr("y", yloc)
+	            .attr("width", 1)
+	            .attr("height", 20)
+	            .style("opacity", 0.85)
+				.attr("fill", "black");
+			}
 
 		// The name of the transcript
 		d3.select(".svg").append("text")
