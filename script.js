@@ -61,11 +61,12 @@ function displayTranscripts(x){
 	var text = svg.append("g").attr("class", "text");
 	var yloc = 10;
 
+	var exons = getAllExonInfo();
 
 	// Delete this when actual array arrives
-	var exonLengths = [[3,3],[3, 3]];
+	var exonLengths = exons.lengths;
 	// the names array
-	var namesArray = [['exon1', 'exon2'],['exon3']];
+	var namesArray = exons.names;
 
 	for(var i = 0; i < spliceVariants.length; i++){
 		var name = $( "input[name='name"+(i+1)+"']" ).val();
@@ -121,25 +122,28 @@ function displayTranscripts(x){
 	
 }
 
-function getAllExonLengths()
+function getAllExonInfo()
 {
-	var exonsLengths = [];
+	var exonsInfo = {lengths : [], names : []};
 
 	for(var i = 1; i < numberOfSV; i++)
 	{
         var exonLengths = [];
-		var exonLengthsText = $('.exon-length.'+i).val();
-		exonLengthsText = exonLengthsText.split(',');
+        var exonNames   = [];
+		var exonInfoText = $('.exon-length.'+i).val();
+		exonInfoText = exonInfoText.split(',');
 
-		for(var j = 1; j < exonLengthsText.length; j++)
+		for(var j = 1; j < exonInfoText.length; j++)
 		{
-			exonLengths.push(exonLengthsText[j].split(':')[1]);
+            exonNames.push(exonInfoText[j].split(':')[0].replace(/ /g,''));
+            exonLengths.push(exonInfoText[j].split(':')[1].replace(/ /g,''));
 		}
 
-		exonsLengths.push(exonLengths);
+        exonsInfo.names.push(exonNames);
+		exonsInfo.lengths.push(exonLengths);
 	}
 
-	return exonsLengths;
+	return exonsInfo;
 }
 
 function exonLengthsHumanFormat(exonLengths)
