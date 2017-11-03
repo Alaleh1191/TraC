@@ -61,44 +61,31 @@ function displayTranscripts(x){
 	var text = svg.append("g").attr("class", "text");
 	var yloc = 10;
 
-	// Delete this when actual array arrives
-	var exonLengths = [[20,40],[30]];
-	// the names array
-	var namesArray = [['exon1', 'exon2'],['exon3']];
+	//delete this when actual array arrives
+	var someARRay = [[20,40],[30]];
 
 	for(var i = 0; i < spliceVariants.length; i++){
 		var name = $( "input[name='name"+(i+1)+"']" ).val();
-		/*svg.append("rect")
+		svg.append("rect")
             .attr("x", 0)
             .attr("y", yloc)
             .attr("width", xScale(spliceVariants[i].length))
             .attr("height", 20)
             .style("opacity", 0.85)
-			.attr("fill", color(name));*/
+			.attr("fill", color(name));
 
 			//go through exons, mark them if they exist
-			var xloc = 0;
-			for(var j=0; j < exonLengths[i].length; j++){
-				length = exonLengths[i][j];
-				svg.append("rect")
-		            .attr("x", xloc)
-		            .attr("y", yloc)
-		            .attr("width", xScale(length/spliceVariants[i].length))
-		            .attr("height", 20)
-		            .style("opacity", 0.85)
-		            .style("stroke", "black")
-		            .style("stroke-width", 1)
-					.attr("fill", color(name));
-
+			var length = 0;
+			for(var j=0; j < someARRay[i].length-1; j++){
 				//draw the exon boundary
-				xloc += xScale(length/spliceVariants[i].length);
-			/*	svg.append("rect")
+				length += someARRay[i][j];
+				svg.append("rect")
 	            .attr("x", length)
 	            .attr("y", yloc)
 	            .attr("width", 1)
 	            .attr("height", 20)
 	            .style("opacity", 0.85)
-				.attr("fill", "black");*/
+				.attr("fill", "black");
 			}
 
 		// The name of the transcript
@@ -115,15 +102,54 @@ function displayTranscripts(x){
 	
 }
 
+function getAllExonLengths()
+{
+	var exonsLengths = [];
+
+	for(var i = 1; i < numberOfSV; i++)
+	{
+        var exonLengths = [];
+		var exonLengthsText = $('.exon-length.'+i).val();
+		exonLengthsText = exonLengthsText.split(',');
+
+		for(var j = 1; j < exonLengthsText.length; j++)
+		{
+			exonLengths.push(exonLengthsText[j].split(':')[1]);
+		}
+
+		exonsLengths.push(exonLengths);
+	}
+
+	return exonsLengths;
+}
+
+function exonLengthsHumanFormat(exonLengths)
+{
+	var string = [];
+
+	if(exonLengths === undefined || exonLengths === null)
+	{
+		return '';
+	}
+
+	Object.keys(exonLengths).forEach(function(key) {
+		string.push(key+':'+exonLengths[key]);
+	});
+
+	return string.join(', ');
+}
+
 // Add a new splice variants with the given name and sequence
-function addSV(name, sequence){
-    if(name == null && sequence == null)
+function addSV(name, sequence, exonLengths){
+    if(name === null && sequence === null)
     {
         name = numberOfSV;
         sequence = '';
     }
-    $("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+name+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class='SV "+numberOfSV+"' style='width: 525px;  height: 13px; margin-bottom: -5px'>"+sequence+"</textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class='del "+numberOfSV+"' onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
-    numberOfSV++;
+    exonLengths = exonLengthsHumanFormat(exonLengths);
+
+    $("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+name+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class='SV "+numberOfSV+"' style='width: 525px;  height: 13px; margin-bottom: -5px'>"+sequence+"</textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><textarea class='exon-length " + numberOfSV +"' style='width: 100px; height: 13px; margin-bottom: -5px'>" + exonLengths + "</textarea><span class="+numberOfSV+" style='margin-right: 4px;'></span><img class='del "+numberOfSV+"' onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
+	numberOfSV++;
 }
 
 // Default name of transcript
