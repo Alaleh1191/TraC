@@ -65,7 +65,7 @@ function displayTranscripts(x){
 	// Delete this when actual array arrives
 	var exonLengths = [[3,3],[3, 3]];
 	// the names array
-	var namesArray = [['exon1', 'exon2'],['exon3']];
+	var namesArray = [['exon1', 'exon2'],['exon3', 'exon4']];
 
 	for(var i = 0; i < spliceVariants.length; i++){
 		var name = $( "input[name='name"+(i+1)+"']" ).val();
@@ -89,8 +89,10 @@ function displayTranscripts(x){
 		            .style("opacity", 0.85)
 		            .style("stroke", "black")
 		            .style("stroke-width", 1)
-					.attr("fill", color(name));
-
+		            .attr("fill", color(name))
+		            .append("svg:title")
+          			.text(function(d, i) { return namesArray[i][j] });
+          		console.log('name:'+ namesArray[i][j])
 				xloc += xScale(spliceVariants[i].length)*length/spliceVariants[i].length;
 				svg.append("rect")
 
