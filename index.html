@@ -29,19 +29,23 @@
 						<input type="button" value="Add Transcript to the list" style="margin-bottom: 12px" class="button1" onclick="searchForTranscript();"/><br/>
 						<span style="font-weight: bold">And/Or enter the sequences below:</span><br/>
 						<div id = "SVs" style="position:relative">
-							<span class= "1"> Name: </span>
+							<span class="1"> Name: </span>
 							<input type="text" name="name1" class="1" value="1" onfocus="onFocus(this)" onblur="onBlur(this)">
-							<span class= "1"> Sequence: </span>
+							<span class="1"> Sequence: </span>
 							<textarea class ="SV 1" style="width: 525px;  height: 13px; margin-bottom: -5px"></textarea>
 							<!-- these images are taken from http://tdyln.me/tdyln-0065-x-10-july-2015/-->
-							<img class = "del 1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript">
-							<br class = "1"/>
-							<span class = "2"> Name: </span>
+							<textarea class='exon-length 1' style="width: 100px; height: 13px; margin-bottom: -5px"></textarea>
+							<span class="+numberOfSV+" style='margin-right: 4px;'></span>
+							<img class="del 1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript">
+							<br class="1"/>
+							<span class="2"> Name: </span>
 							<input type="text" name="name2" class="2" value="2" onfocus="onFocus(this)" onblur="onBlur(this)">
-							<span class= "2"> Sequence: </span>
-							<textarea class ="SV 2"  style="width: 525px; height: 13px; margin-bottom: -5px"></textarea>
-							<img class ="del 2" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px">
-							<br class = "2"/>
+							<span class="2"> Sequence: </span>
+							<textarea class="SV 2"  style="width: 525px; height: 13px; margin-bottom: -5px"></textarea>
+							<textarea class='exon-length 2' style="width: 100px; height: 13px; margin-bottom: -5px"></textarea>
+							<span class="+numberOfSV+" style='margin-right: 4px;'></span>
+							<img class="del 2" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px">
+							<br class="2"/>
 						</div>
 						<img onclick="addSV()" src='http://www.clker.com/cliparts/e/6/d/7/1194994263582955302add.svg.thumb.png' alt='Addition Plus Sign clip art' style="position: relative;" title="add transcript" height= "20px"/><br class="addSV"/>
 						

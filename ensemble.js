@@ -69,6 +69,36 @@ function searchForGene()
 	xhr.send(null);
 }
 
+/* Return the exons in sorted order */
+function sortExons(exons)
+{
+    return exons.sort(function(exon1, exon2) {
+        if(exon1.start < exon2.start)
+        {
+            return -1;
+        }
+        if(exon1.start > exon2.start)
+        {
+            return 1;
+        }
+
+        return 0;
+    });
+}
+
+function getInfoOfEachExon(exons)
+{
+    var exonLengths = {};
+    exons = sortExons(exons);
+
+    exons.forEach(function(exon) {
+        exonLengths[exon.id] = (exon.end - exon.start);
+    });
+
+    return exonLengths;
+}
+
+
 /* Add the selected transcripts to the list*/
 function searchForTranscript()
 {
@@ -104,7 +134,7 @@ function searchForTranscript()
     transcript = transcriptsGlobal[transcript];
 
 
-    var exons = transcript['Exon'];
+    var exons = sortExons(transcript['Exon']);
     var exonIds = {};
     exonIds['ids'] = [];
     exonIds['format'] = 'JSON';
@@ -125,17 +155,18 @@ function searchForTranscript()
         {
             var sequence = xhr.responseText;
             sequence = sequence.split("\n");
-            sequence = sequence.join('');            
+            sequence = sequence.join('');
+            var exonLengths = getInfoOfEachExon(transcript['Exon']);
+
+
             $("#loading").remove();
             if(placed == -1){
-            	addSV(transcript['display_name'], sequence);
+                addSV(transcript['display_name'], sequence, exonLengths);
             } else {
-            	$(".SV."+placed).val(sequence);
-        		$( "input[name='name"+placed+"']" ).val(transcript['display_name']);
-        		
+                $(".SV."+placed).val(sequence);
+                $( "input[name='name"+placed+"']" ).val(transcript['display_name']);
+                $('.exon-length.'+placed).val(exonLengthsHumanFormat(exonLengths));
             }
-            
-
         }
     });
 
@@ -157,7 +188,7 @@ function allTranscriptsInSelectedGene()
 
     for (i = 0; i < transcriptsGlobal.length; i++)
     {
-        var exons = transcriptsGlobal[i]['Exon'];
+        var exons = sortExons(transcriptsGlobal[i]['Exon']);
 
         var exonIds = {};
         exonIds['ids'] = [];
@@ -179,9 +210,9 @@ function allTranscriptsInSelectedGene()
                     var sequence = xhr[i].responseText;
                     sequence = sequence.split("\n");
                     sequence = sequence.join('');
+                    var exonLengths = getInfoOfEachExon(transcriptsGlobal[i]['Exon']);
 
-                    addSV(transcriptsGlobal[i]['display_name'], sequence);
-
+                    addSV(transcriptsGlobal[i]['display_name'], sequence, exonLengths);
                 }
             });
         }(i));
