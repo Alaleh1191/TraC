@@ -62,7 +62,7 @@ function displayTranscripts(x){
 	var yloc = 10;
 
 	// Delete this when actual array arrives
-	var exonLengths = [[20,40],[30]];
+	var exonLengths = [[3,3],[3, 3]];
 	// the names array
 	var namesArray = [['exon1', 'exon2'],['exon3']];
 
@@ -83,15 +83,14 @@ function displayTranscripts(x){
 				svg.append("rect")
 		            .attr("x", xloc)
 		            .attr("y", yloc)
-		            .attr("width", xScale(length/spliceVariants[i].length))
+		            .attr("width", xScale(spliceVariants[i].length)*length/spliceVariants[i].length)
 		            .attr("height", 20)
 		            .style("opacity", 0.85)
 		            .style("stroke", "black")
 		            .style("stroke-width", 1)
 					.attr("fill", color(name));
 
-				//draw the exon boundary
-				xloc += xScale(length/spliceVariants[i].length);
+				xloc += xScale(spliceVariants[i].length)*length/spliceVariants[i].length;
 			/*	svg.append("rect")
 	            .attr("x", length)
 	            .attr("y", yloc)
