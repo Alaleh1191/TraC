@@ -61,31 +61,44 @@ function displayTranscripts(x){
 	var text = svg.append("g").attr("class", "text");
 	var yloc = 10;
 
-	//delete this when actual array arrives
-	var someARRay = [[20,40],[30]];
+	// Delete this when actual array arrives
+	var exonLengths = [[20,40],[30]];
+	// the names array
+	var namesArray = [['exon1', 'exon2'],['exon3']];
 
 	for(var i = 0; i < spliceVariants.length; i++){
 		var name = $( "input[name='name"+(i+1)+"']" ).val();
-		svg.append("rect")
+		/*svg.append("rect")
             .attr("x", 0)
             .attr("y", yloc)
             .attr("width", xScale(spliceVariants[i].length))
             .attr("height", 20)
             .style("opacity", 0.85)
-			.attr("fill", color(name));
+			.attr("fill", color(name));*/
 
 			//go through exons, mark them if they exist
-			var length = 0;
-			for(var j=0; j < someARRay[i].length-1; j++){
-				//draw the exon boundary
-				length += someARRay[i][j];
+			var xloc = 0;
+			for(var j=0; j < exonLengths[i].length; j++){
+				length = exonLengths[i][j];
 				svg.append("rect")
+		            .attr("x", xloc)
+		            .attr("y", yloc)
+		            .attr("width", xScale(length/spliceVariants[i].length))
+		            .attr("height", 20)
+		            .style("opacity", 0.85)
+		            .style("stroke", "black")
+		            .style("stroke-width", 1)
+					.attr("fill", color(name));
+
+				//draw the exon boundary
+				xloc += xScale(length/spliceVariants[i].length);
+			/*	svg.append("rect")
 	            .attr("x", length)
 	            .attr("y", yloc)
 	            .attr("width", 1)
 	            .attr("height", 20)
 	            .style("opacity", 0.85)
-				.attr("fill", "black");
+				.attr("fill", "black");*/
 			}
 
 		// The name of the transcript
