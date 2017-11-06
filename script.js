@@ -92,7 +92,7 @@ function displayTranscripts(x){
 		            .style("stroke-width", 1)
 		            .attr("fill", color(name))
 		            .append("svg:title")
-          			.text(function(d, i) { return namesArray[i][j] });
+          			.text(function(d, k) { return namesArray[i][j] });
           		console.log('name:'+ namesArray[i][j])
 				xloc += xScale(spliceVariants[i].length)*length/spliceVariants[i].length;
 				svg.append("rect")
