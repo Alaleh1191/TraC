@@ -70,15 +70,8 @@ function displayTranscripts(x){
 
 	for(var i = 0; i < spliceVariants.length; i++){
 		var name = $( "input[name='name"+(i+1)+"']" ).val();
-	/*	svg.append("rect")
-            .attr("x", 0)
-            .attr("y", yloc)
-            .attr("width", xScale(spliceVariants[i].length))
-            .attr("height", 20)
-            .style("opacity", 0.85)
-			.attr("fill", color(name));
-*/
-			//if exon array not empty go through exons
+		//if exon array not empty go through exons
+		if(exonLengths[i].length != 0){
 			var xloc = 0;
 			for(var j=0; j < exonLengths[i].length; j++){
 				length = exonLengths[i][j];
@@ -92,23 +85,21 @@ function displayTranscripts(x){
 		            .style("stroke-width", 1)
 		            .attr("fill", color(name))
 		            .append("svg:title")
-          			.text(function(d, k) { return namesArray[i][j] });
-          		console.log('name:'+ namesArray[i][j])
+	      			.text(function(d, k) { return namesArray[i][j] });
 				xloc += xScale(spliceVariants[i].length)*length/spliceVariants[i].length;
 				svg.append("rect")
-
-			/*var length = 0;
-			for(var j=0; j < someARRay[i].length-1; j++){
-				//draw the exon boundary
-				length += someARRay[i][j];
-				svg.append("rect")
-	            .attr("x", length)
+			}
+		} else {
+			svg.append("rect")
+	            .attr("x", 0)
 	            .attr("y", yloc)
-	            .attr("width", 1)
+	            .attr("width", xScale(spliceVariants[i].length))
 	            .attr("height", 20)
 	            .style("opacity", 0.85)
-				.attr("fill", "black");*/
-			}
+				.attr("fill", color(name))
+				.style("stroke", "black")
+		        .style("stroke-width", 1);
+		}
 
 		// The name of the transcript
 		d3.select(".svg").append("text")
@@ -133,12 +124,14 @@ function getAllExonInfo()
         var exonLengths = [];
         var exonNames   = [];
 		var exonInfoText = $('.exon-length.'+i).val();
-		exonInfoText = exonInfoText.split(',');
 
-		for(var j = 0; j < exonInfoText.length; j++)
-		{
-            exonNames.push(exonInfoText[j].split(':')[0].replace(/ /g,''));
-            exonLengths.push(exonInfoText[j].split(':')[1].replace(/ /g,''));
+		exonInfoText = exonInfoText.split(',');
+		if(exonInfoText != "") {
+			for(var j = 0; j < exonInfoText.length; j++)
+			{
+	            exonNames.push(exonInfoText[j].split(':')[0].replace(/ /g,''));
+	            exonLengths.push(exonInfoText[j].split(':')[1].replace(/ /g,''));
+			}
 		}
 
         exonsInfo.names.push(exonNames);

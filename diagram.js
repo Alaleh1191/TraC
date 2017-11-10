@@ -291,11 +291,13 @@ function displayLocation(name){
 			for(j = 0; j < indices.length; j++){
 				d3.select("#svgT").append("rect")
 				            .attr("x", xScale(indices[j]))
-				            .attr("y", yloc)
+				            .attr("y", yloc - 0)// -5
 				            .attr("width", xScale(name.length))
-				            .attr("height", 20)
+				            .attr("height", 20)//3
 				            .attr("class", "probe")
-							.attr("fill", "rgb(228, 75, 75)");
+				            .style("opacity","0.65")//1
+				            .style("pointer-events","none")
+							.attr("fill", "white");//rgb(228, 75, 75)
 			}
 
 			
