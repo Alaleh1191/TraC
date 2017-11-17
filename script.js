@@ -171,7 +171,7 @@ function addSV(name, sequence, exonLengths){
 
     exonLengths = exonLengthsHumanFormat(exonLengths);
 
-    $("#SVs").append("<span class='"+numberOfSV+"'> Name: </span> <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+name+"' onfocus='onFocus(this)' onblur='onBlur(this)'> <span class='"+numberOfSV+"'> Sequence: </span><textarea class='SV "+numberOfSV+"' style='width: 525px;  height: 13px; margin-bottom: -5px'>"+sequence+"</textarea><span class='" +numberOfSV+"' style='margin-right: 4px;'></span><textarea class='exon-length " + numberOfSV +"' style='width: 100px; height: 13px; margin-bottom: -5px'>" + exonLengths + "</textarea><span class='"+numberOfSV+"' style='margin-right: 4px;'></span><img class='del "+numberOfSV+"' onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
+    $("#SVs").append(" <input type='text' name='name"+numberOfSV+"' class='"+numberOfSV+"' value='"+name+"' onfocus='onFocus(this)' onblur='onBlur(this)'><textarea class='SV "+numberOfSV+"' style='width: 525px;  height: 13px; margin-bottom: -5px; margin-right:15px; margin-left:24px;'>"+sequence+"</textarea><span class='" +numberOfSV+"' style='margin-right: 4px;'></span><textarea class='exon-length " + numberOfSV +"' style='width: 200px; height: 13px; margin-bottom: -5px'>" + exonLengths + "</textarea><span class='"+numberOfSV+"' style='margin-right: 4px;'></span><img class='del "+numberOfSV+"' onclick='removeSV(this)' src='x-button.png' alt='delete' height='19px' style='margin-bottom: -5px'> <br class='"+numberOfSV+"'/>")
 	numberOfSV++;
 }
 
