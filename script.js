@@ -227,7 +227,7 @@ function chordData()
 		$("#probe").css("display","none");
 		displayTranscripts(1);
 		var found = displayLocation(reverse);
-		$("#results").html("the white rectangles correspond to the location of the given subsequence");
+		$("#results").html("the whiteq rectangles correspond to the location of the given subsequence");
 		if(!found){
 			$("#probeLoc").empty();
 			$("#results").html("None of the transcripts share the given subsequence. To find all shared subsequences, please empty the subsequence textbox and resubmit.");
