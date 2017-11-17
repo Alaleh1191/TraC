@@ -174,10 +174,32 @@ function searchForTranscript()
     xhr.send(exonIds);
 }
 
+var xhr = [];
+var xhr_number = 0;
+
+function sendRequest(i, exonIds)
+{
+    xhr[i] = new XMLHttpRequest();
+    xhr[i].open('POST', '//rest.ensembl.org/sequence/id');
+    xhr[i].setRequestHeader("Content-Type", "text/plain");
+
+    xhr[i].onreadystatechange = (function () {
+        if (xhr[i].readyState == 4 && xhr[i].status == 200) {
+            var sequence = xhr[i].responseText;
+            sequence = sequence.split("\n");
+            sequence = sequence.join('');
+            var exonLengths = getInfoOfEachExon(transcriptsGlobal[i]['Exon']);
+
+            addSV(transcriptsGlobal[i]['display_name'], sequence, exonLengths);
+        }
+    });
+
+    $("#loading").remove();
+    xhr[i].send(exonIds);
+}
+
 function allTranscriptsInSelectedGene()
 {
-    var xhr = [];
-
     // remove all unfilled sequences
     for(var i=1; i < numberOfSV; i++){
         if($(".SV."+i).val() == "") {
@@ -186,7 +208,9 @@ function allTranscriptsInSelectedGene()
         }
     }
 
-    for (i = 0; i < transcriptsGlobal.length; i++)
+    var timeout = 0;
+
+    for (i = xhr_number; i < transcriptsGlobal.length; i++)
     {
         var exons = sortExons(transcriptsGlobal[i]['Exon']);
 
@@ -200,25 +224,12 @@ function allTranscriptsInSelectedGene()
         }
 
         exonIds = JSON.stringify(exonIds);
-        (function (i) {
-            xhr[i] = new XMLHttpRequest();
-            xhr[i].open('POST', '//rest.ensembl.org/sequence/id');
-            xhr[i].setRequestHeader("Content-Type", "text/plain");
 
-            xhr[i].onreadystatechange = (function () {
-                if (xhr[i].readyState == 4 && xhr[i].status == 200) {
-                    var sequence = xhr[i].responseText;
-                    sequence = sequence.split("\n");
-                    sequence = sequence.join('');
-                    var exonLengths = getInfoOfEachExon(transcriptsGlobal[i]['Exon']);
+        console.log(timeout);
 
-                    addSV(transcriptsGlobal[i]['display_name'], sequence, exonLengths);
-                }
-            });
-        }(i));
+        setTimeout(function(i, exonIds) { sendRequest(i, exonIds) }, timeout, i, exonIds);
 
-        $("#loading").remove();
-        xhr[i].send(exonIds);
+        timeout += 100;
     }
 }
 
