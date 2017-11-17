@@ -8,6 +8,11 @@ $(document).ready(function(){
 
 numberOfSV = 3;
 
+//reduce
+function add(a, b) {
+    return a + b;
+}
+
 //Draw tracks 
 function displayTranscripts(x){
 	if(!x){
@@ -72,6 +77,9 @@ function displayTranscripts(x){
 		var name = $( "input[name='name"+(i+1)+"']" ).val();
 		//if exon array not empty go through exons
 		if(exonLengths[i].length != 0){
+			if(exonLengths[i].reduce(add, 0) != spliceVariants[i].length){
+				alert("the sum of exon lengths for transcript "+name+" does not add up to the transcript length.")
+			}
 			var xloc = 0;
 			for(var j=0; j < exonLengths[i].length; j++){
 				length = exonLengths[i][j];
@@ -232,7 +240,7 @@ function chordData()
 		$("#probe").css("display","none");
 		displayTranscripts(1);
 		var found = displayLocation(reverse);
-		$("#results").html("the whiteq rectangles correspond to the location of the given subsequence");
+		$("#results").html("the white rectangles correspond to the location of the given subsequence");
 		if(!found){
 			$("#probeLoc").empty();
 			$("#results").html("None of the transcripts share the given subsequence. To find all shared subsequences, please empty the subsequence textbox and resubmit.");
