@@ -92,7 +92,7 @@ function getInfoOfEachExon(exons)
     exons = sortExons(exons);
 
     exons.forEach(function(exon) {
-        exonLengths[exon.id] = (exon.end - exon.start);
+        exonLengths[exon.id] = (exon.end - exon.start + 1);
     });
 
     return exonLengths;
