@@ -78,7 +78,9 @@ function displayTranscripts(x){
 		//if exon array not empty go through exons
 		if(exonLengths[i].length != 0){
 			if(exonLengths[i].reduce(add, 0) != spliceVariants[i].length){
-				alert("the sum of exon lengths for transcript "+name+" does not add up to the transcript length.")
+				console.log(exonLengths[i]);
+				console.log(exonLengths[i].reduce(add, 0));
+				//alert("the sum of exon lengths for transcript "+name+" does not add up to the transcript length. sums are "+exonLengths[i].reduce(add, 0)+ " " +spliceVariants[i].length)
 			}
 			var xloc = 0;
 			for(var j=0; j < exonLengths[i].length; j++){
