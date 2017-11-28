@@ -225,8 +225,6 @@ function allTranscriptsInSelectedGene()
 
         exonIds = JSON.stringify(exonIds);
 
-        console.log(timeout);
-
         setTimeout(function(i, exonIds) { sendRequest(i, exonIds) }, timeout, i, exonIds);
 
         timeout += 100;
