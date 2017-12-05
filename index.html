@@ -12,7 +12,7 @@
 	</head>
 	<body>
 		<h1 style="margin:auto;text-align:center;">TraC: Transcript Consensus</h1>
-		<p style="margin:auto;text-align: center; font-size: 15px;">TraC is a tool for finding consensus sites in splice variants of a single gene or a set of closely related genes.  Splice variants and sequences are drawn from the <a href="http://www.ensembl.org"> Ensembl</a> database.  The algorithm is described in a manuscript in preparation.</p>
+		<p style="margin:auto;text-align: center; font-size: 15px;">TraC is a tool for finding shared sequences in splice variants of a single gene or a set of closely related genes.  Splice variants and sequences can be drawn from the <a href="http://www.ensembl.org"> Ensembl</a> database.  The tool is described in a manuscript in preparation.</p>
 		<p style="margin:auto;text-align: center; font-size: 15px; margin-top: -5px"> Alaleh Azhir, Louis-Henri Merino, David Nauen </p>
 			<div>
 				<form style="margin-top: 15px; margin-bottom: 15px">
@@ -54,17 +54,17 @@
 					</div>
 					<span style="font-size: 18px;margin-left: 5px;font-weight: bold;">Step 2: Settings</span>
 					<div style="border: 3px solid rgb(234, 112, 111); border-radius: 10px; padding: 5px;"> 
-						<span class="fade" style="font-weight: bold">Find all shared Sequences:</span><br/>
+						<span class="fade" style="font-weight: bold">Find Shared Sequences:</span><br/>
 						<span class="fade">Please enter the minimum length of a shared sequence: </span>
 						<input class ="fade" type="text" name="minLength" id='minLength' value="20" onfocus="if (this.value==20) this.value = ''" onblur="if (this.value=='') this.value = 20"><br/>
-						<span class="fade" style="margin-right: 15px">Weight Probes by:</span>
+						<span class="fade" style="margin-right: 15px">Weight shared sequence display by:</span>
 						<div class="fade" style="display: inline-block;margin-bottom: 10px">
-							<input type="radio" name="weight" value="length" checked> Length of the Probe <span style="margin-left: 15px"></span>
-	  						<input type="radio" name="weight" value="shared"> Number of Transcripts Containing the Probe
+							<input type="radio" name="weight" value="length" checked> Length <span style="margin-left: 15px"></span>
+	  						<input type="radio" name="weight" value="shared"> Number of transcripts in which it occurs
 	  					</div>
 	  					<br/>
-	  					<span style="font-weight: bold">Or check for a specific subsequence:</span><br/>
-	  					<span>Check to see if this subsequence is shared among any of the given transcripts:</span>
+	  					<span style="font-weight: bold">Or check the input sequences for a specific subsequence:</span><br/>
+	  					<span>Check to see if this subsequence is present among any of the input transcripts:</span>
 					    <textarea id="reverse" style="width: 525px;  height: 13px; margin-bottom: -5px" onkeyup="fade();"></textarea>
   					</div>
   					
@@ -85,8 +85,8 @@
 			<div style="width: 500px;" id="probeLoc">  </div>
 
 			<div style="margin-left: 750px; ">
-				<span style="display:none;" id="title_probe">Probe:</span>
-				<span style="display:none;" id="title">Please click on the probe to get its sequence</span>
+				<span style="display:none;" id="title_probe">Shared Sequence:</span>
+				<span style="display:none;" id="title">Please click on the circle to get its sequence</span>
 				<textarea id="probe" style="display: none;text-anchor: middle;width: 500px; height:400px; word-wrap: break-word" readonly></textarea>
 			</div>
 
