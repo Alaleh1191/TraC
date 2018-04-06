@@ -1,38 +1,72 @@
 var transcriptsGlobal = [];
 var topOfSpeciesList = ['Human', 'Mouse'];
 
-/* load the species drop down by retrieving it from ensemble. */
-window.onload = (function() {
+var baseURL = '//rest.ensembl.org/';
+
+/* load the species drop down by retrieving it from ensembl. */
+function assemblySelected()
+{
+    var select = document.getElementById('assembly');
+    var option = select.options[select.selectedIndex].value;
+
+    // Visualization Change
+    document.getElementById('species').innerHTML = '';
+    document.getElementById('species').disabled = true;
+    document.getElementById('gene').disabled = true;
+    document.getElementById('transcripts').disabled = true;
+
+    if(option === "1")
+    {
+        baseURL = '//rest.ensembl.org/';
+
+        getSpecies();
+        return;
+    }
+    else if(option === "2")
+    {
+        baseURL = '//grch37.rest.ensembl.org/';
+        getSpecies();
+        return;
+    }
+
+    console.error('Incorrect Assembly value');
+}
+
+function getSpecies()
+{
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '//rest.ensembl.org/info/species?content-type=application/json');
+    xhr.open('GET', baseURL + 'info/species?content-type=application/json');
     xhr.onreadystatechange = (function() {
-        if(xhr.status == 200 && xhr.readyState == 4)
-		{
-			var species = JSON.parse(xhr.responseText);
-			species = species.species;
+        if(xhr.status === 200 && xhr.readyState === 4)
+        {
+            var species = JSON.parse(xhr.responseText);
+            species = species.species;
 
-			var speciesOptions = '';
-			for(var i = 0; i < species.length; i++)
-			{
-			    var option = '<option value="' + species[i].name + '">' + species[i].display_name + '</option>';
+            var speciesOptions = '';
+            for(var i = 0; i < species.length; i++)
+            {
+                var option = '<option value="' + species[i].name + '">' + species[i].display_name + '</option>';
 
-			    //By default, Human and Mouse should be on the top of the list
-			    if(topOfSpeciesList.includes(species[i].display_name))
+                //By default, Human and Mouse should be on the top of the list
+                if(topOfSpeciesList.includes(species[i].display_name))
                 {
                     speciesOptions = option + speciesOptions;
                 }
 
-				speciesOptions += option;
-			}
+                speciesOptions += option;
+            }
 
-			document.getElementById('species').innerHTML = speciesOptions;
+            document.getElementById('species').innerHTML = speciesOptions;
+            document.getElementById('species').removeAttribute('disabled');
+            document.getElementById('gene').removeAttribute('disabled');
+            document.getElementById('transcripts').removeAttribute('disabled');
 
-		}
-	});
-	xhr.send();
-	$('select').select2();
-	$(".select2").removeAttr("style");
-});
+
+        }
+    });
+    xhr.send();
+
+}
 
 /* after clicking select species and gene, retrieve the transcripts of the selected gene and specie */
 function searchForGene()
@@ -43,9 +77,9 @@ function searchForGene()
 	var gene = document.getElementById('gene').value;
 
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', '//rest.ensembl.org/lookup/symbol/'+specie+'/'+gene+'?content-type=application/json;expand=1');
+	xhr.open('GET', baseURL + 'lookup/symbol/'+specie+'/'+gene+'?content-type=application/json;expand=1');
 	xhr.onreadystatechange = (function() {
-	   if(xhr.status == 200 && xhr.readyState == 4)
+	   if(xhr.status === 200 && xhr.readyState === 4)
 	   {
            var transcripts = JSON.parse(xhr.responseText);
            transcripts = transcripts['Transcript'];
@@ -59,7 +93,7 @@ function searchForGene()
 
 			document.getElementById('transcripts').innerHTML = transcriptsOptions;
 	   }
-	   else if(xhr.readyState == 4)
+	   else if(xhr.readyState === 4)
 	   {
 	       alert('Supplied Specie and Gene was not found');
            transcriptsGlobal = [];
@@ -126,9 +160,9 @@ function searchForTranscript()
     //if an unfilled sequence is found
     if (placed != -1) {
     	$(".del."+(placed-1)).css("position", "relative");
-    	$("br."+placed).before("<img id='loading' src='Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -25px; margin-left: -58px;margin-top: -37px;' /> ");
+    	$("br."+placed).before("<img id='loading' src='../Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -25px; margin-left: -58px;margin-top: -37px;' /> ");
     } else {
-    	$("br.addSV").before("<img id='loading' src='Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -19px; margin-left: -25px;margin-top: -35px;' /> ")
+    	$("br.addSV").before("<img id='loading' src='../Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -19px; margin-left: -25px;margin-top: -35px;' /> ")
     }
 
     transcript = transcriptsGlobal[transcript];
@@ -147,11 +181,11 @@ function searchForTranscript()
     exonIds = JSON.stringify(exonIds);
 
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '//rest.ensembl.org/sequence/id');
+    xhr.open('POST', baseURL + '/sequence/id');
     xhr.setRequestHeader("Content-Type", "text/plain");
 
     xhr.onreadystatechange = (function() {
-        if(xhr.readyState == 4 && xhr.status == 200)
+        if(xhr.readyState === 4 && xhr.status === 200)
         {
             var sequence = xhr.responseText;
             sequence = sequence.split("\n");
@@ -160,7 +194,7 @@ function searchForTranscript()
 
 
             $("#loading").remove();
-            if(placed == -1){
+            if(placed === -1){
                 addSV(transcript['display_name'], sequence, exonLengths);
             } else {
                 $(".SV."+placed).val(sequence);
@@ -180,11 +214,11 @@ var xhr_number = 0;
 function sendRequest(i, exonIds)
 {
     xhr[i] = new XMLHttpRequest();
-    xhr[i].open('POST', '//rest.ensembl.org/sequence/id');
+    xhr[i].open('POST', baseURL + 'sequence/id');
     xhr[i].setRequestHeader("Content-Type", "text/plain");
 
     xhr[i].onreadystatechange = (function () {
-        if (xhr[i].readyState == 4 && xhr[i].status == 200) {
+        if (xhr[i].readyState === 4 && xhr[i].status === 200) {
             var sequence = xhr[i].responseText;
             sequence = sequence.split("\n");
             sequence = sequence.join('');
