@@ -122,11 +122,11 @@ function sortExons(exons)
 
 function getInfoOfEachExon(exons)
 {
-    var exonLengths = {};
+    var exonLengths = [];
     exons = sortExons(exons);
 
     exons.forEach(function(exon) {
-        exonLengths[exon.id] = (exon.end - exon.start + 1);
+        exonLengths.push({'key' : exon.id,  'value' : (exon.end - exon.start + 1) });
     });
 
     return exonLengths;
@@ -147,22 +147,14 @@ function searchForTranscript()
         return;
     }
 
-	var placed = -1; // -1 if needed to create a new row
-
-    // check for unfilled sequences
-	for(var i=1; i < numberOfSV; i++){
-        if($(".SV."+i).val() == ""){
-        	placed = i;
-        	break;
-        }
-    }
+	var placed = firstAvailablePlacement();
 
     //if an unfilled sequence is found
     if (placed != -1) {
     	$(".del."+(placed-1)).css("position", "relative");
-    	$("br."+placed).before("<img id='loading' src='../Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -25px; margin-left: -58px;margin-top: -37px;' /> ");
+    	$("br."+placed).before("<img id='loading' src='Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -25px; margin-left: -58px;margin-top: -37px;' /> ");
     } else {
-    	$("br.addSV").before("<img id='loading' src='../Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -19px; margin-left: -25px;margin-top: -35px;' /> ")
+    	$("br.addSV").before("<img id='loading' src='Loading_icon.gif' alt='loading' style='height: 60px; margin-bottom: -19px; margin-left: -25px;margin-top: -35px;' /> ")
     }
 
     transcript = transcriptsGlobal[transcript];
@@ -234,14 +226,9 @@ function sendRequest(i, exonIds)
 
 function allTranscriptsInSelectedGene()
 {
-    // remove all unfilled sequences
-    for(var i=1; i < numberOfSV; i++){
-        if($(".SV."+i).val() == "") {
-            removeSV(document.getElementsByClassName(i)[4]);
-            i--; //decrement i because removeSV moves everything up
-        }
-    }
+    removeAllUnfilledSequences();
 
+    // Ensembl timeout
     var timeout = 0;
 
     for (i = xhr_number; i < transcriptsGlobal.length; i++)

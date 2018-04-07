@@ -20,26 +20,38 @@
 					<span style="font-size: 18px;margin-left: 5px;font-weight: bold;">Step 1: Transcript entry or upload</span>
 				    <div style="border: 3px solid rgb(20, 160, 194); border-radius: 10px; padding: 5px; margin-bottom: 15px">
 						<!--<span>Please enter the sequence for transcripts:</span><br/>-->
-						<!--<span style="font-weight: bold"> Select a transcript by selecting a database, gene and species:</span> <br/>
+						<span style="font-weight: bold"> Select a transcript by selecting a database, gene and species:</span> <br/>
 						<span style="margin-right: 15px">Database:</span>
 						<div  style="display: inline-block;margin-bottom: 10px">
-							<input type="radio" name="db" value="ensembl" checked> Ensembl <span style="margin-left: 15px"></span>
-							<input type="radio" name="db" value="refseq"> Refseq
-						</div>-->
+							<input type="radio" name="db" value="Ensembl" checked> Ensembl <span style="margin-left: 15px"></span>
+							<input type="radio" name="db" value="NCBI"> NCBI
+						</div>
+						<br/>
 
-						<!--<label for="assembly">Assembly:</label>-->
-						<select data-placeholder="Assembly:" id="assembly" name="assembly" class="chosen-select" onchange="assemblySelected()">
-							<option></option>
-							<option value="1">GRCh38</option>
-							<option value="2">GRCh37</option>
-						</select>
-						<label for="species"> Species: </label>
-						<select id="species" disabled></select>
-						<label for="gene"> Gene: </label>
-						<input type="text" id="gene" disabled/>
-						<input type="button" value="Select Species and Gene" class="button1" onclick="searchForGene();"/> <br/>
-						<select id="transcripts" disabled></select>
-						<input type="button" value="Add Transcript to the list" style="margin-bottom: 12px" class="button1" onclick="searchForTranscript();"/><br/>
+						<div id="Ensembl">
+							<select data-placeholder="Assembly:" id="assembly" name="assembly" class="chosen-select" onchange="assemblySelected()">
+								<option></option>
+								<option value="1">GRCh38</option>
+								<option value="2">GRCh37</option>
+							</select>
+							<label for="species"> Species: </label>
+							<select id="species" disabled></select>
+							<label for="gene"> Gene: </label>
+							<input type="text" id="gene" disabled/>
+							<input type="button" value="Select Species and Gene" class="button1" onclick="searchForGene();"/> <br/>
+							<select id="transcripts" disabled></select>
+							<input type="button" value="Add Transcript to the list" style="margin-bottom: 12px" class="button1" onclick="searchForTranscript();"/><br/>
+
+
+						</div>
+						<div id="NCBI" style="display: none;">
+							<label>Please list the accession numbers (separated by comma):</label>
+							<br/>
+							<textarea name="NCBI_Numbers" id="NCBI_Numbers" style="width: 500px;height: 100px;"></textarea>
+							<br/>
+							<input type="button" value="Add Transcript to the list" style="margin-bottom: 12px" class="button1" onclick="submitNCBI()"/>
+						</div>
+
 						<span style="font-weight: bold">And/Or enter the sequences below:</span><br/>
 						<div id = "names">
 							<span style="margin-right: 4px"> Name: </span>
@@ -117,8 +129,9 @@
 			<script src="diagram.js"></script>
             <script src="chordComputation.js"></script>
 
-			<script type="text/javascript" src="DB/ensemble.js"></script>
+			<script type="text/javascript" src="DB/ensembl.js"></script>
 			<script type="text/javascript" src="DB/script.js"></script>
+			<script type="text/javascript" src="DB/NCBI.js"></script>
 			<script>
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

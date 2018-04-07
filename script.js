@@ -158,8 +158,12 @@ function exonLengthsHumanFormat(exonLengths)
 		return '';
 	}
 
-	Object.keys(exonLengths).forEach(function(key) {
+	/*Object.keys(exonLengths).forEach(function(key) {
 		string.push(key+':'+exonLengths[key]);
+	});*/
+
+	exonLengths.forEach(function(element) {
+		string.push(element['key'] + ':' + element['value']);
 	});
 
 	return string.join(', ');
