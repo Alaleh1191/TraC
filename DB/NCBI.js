@@ -116,6 +116,8 @@ function getNCBISequences()
             var response = sequenceXHR.responseXML;
 
             parseNCBIXML(response);
+
+            submission = false;
         }
     });
 
