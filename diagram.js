@@ -148,6 +148,8 @@ var svg = d3.select("#sv-chart").append("svg")
             d3.select("#title").style('display', 'block').html('Shared Sequence:');
             d3.select("#probe").style('display', 'block').html(d.name);
 			displayLocation(d.name);
+			$(".shared").css("opacity","0.2");
+			$("#"+d.name).css("opacity","1");
 		})
      	.on("mouseout", function(d) {
 			

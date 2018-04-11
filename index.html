@@ -60,14 +60,14 @@
 							<br class="2"/>
 						</div>
 						<div id = "SVs" style="position:relative">
-							<input type="text" name="name1" class="1" value="1" onfocus="onFocus(this)" onblur="onBlur(this)">
+							<input type="text" name="name1" class="name 1" value="1" onfocus="onFocus(this)" onblur="onBlur(this)">
 							<textarea class ="SV 1" style="width: 525px;  height: 13px; margin-bottom: -5px; margin-right: 15px; margin-left: 20px"></textarea>
 							<!-- these images are taken from http://tdyln.me/tdyln-0065-x-10-july-2015/-->
 							<textarea class='exon-length 1' style="width: 200px; height: 13px; margin-bottom: -5px"></textarea>
 							<span class="1" style='margin-right: 4px;'></span>
 							<img class="del 1" onclick="removeSV(this)" src="x-button.png" alt="delete" height="19px" style= "margin-bottom:-5px" title="delete this transcript">
 							<br class="1"/>
-							<input type="text" name="name2" class="2" value="2" onfocus="onFocus(this)" onblur="onBlur(this)">
+							<input type="text" name="name2" class="name 2" value="2" onfocus="onFocus(this)" onblur="onBlur(this)">
 							<textarea class="SV 2"  style="width: 525px; height: 13px; margin-bottom: -5px;margin-right: 15px; margin-left: 20px"></textarea>
 							<textarea class='exon-length 2' style="width: 200px; height: 13px; margin-bottom: -5px"></textarea>
 							<span class="2" style='margin-right: 4px;'></span>
@@ -107,14 +107,27 @@
 
 			<div  style="width: 525px;white-space: pre-wrap;word-wrap: break-word;"><span id = "results"></span></div>
 			<div id="sv-chart" style="width: 700px; float: left; position: absolute;"></div>
+			<div>
 			<div style="width: 500px;" id="probeLoc">  </div>
+			
+			<div id="track_div" style="display:none; margin-left: 750px">
+				<span style="margin-right: 10px;float:left" >Display all shared sequences on the following transcript:</span>
+			<select data-placeholder="Transcript:" id="track" name="track" class="chosen-select" onchange="trackChange();">
+								<option></option>
+								<option>111</option>
+							</select>
+			</div>
+			<div id="trackWShared" style="margin-left: 750px;">
+				
+			</div>
 
-			<div style="margin-left: 750px; ">
+			</div>
+			<div style="margin-left: 750px; height: 600px">
 				<span style="display:none;" id="title_probe">Shared Sequence:</span>
 				<span style="display:none;" id="title">Please click on the circle to get its sequence</span>
 				<textarea id="probe" style="display: none;text-anchor: middle;width: 500px; height:400px; word-wrap: break-word" readonly></textarea>
 			</div>
-
+			
 			<script src="jquery-1.12.4.min.js"></script>
 
 			<!-- D3 v4 -->
