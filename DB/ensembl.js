@@ -109,11 +109,11 @@ function sortExons(exons)
     return exons.sort(function(exon1, exon2) {
         if(exon1.start < exon2.start)
         {
-            return -1;
+            return 1;
         }
         if(exon1.start > exon2.start)
         {
-            return 1;
+            return -1;
         }
 
         return 0;
@@ -123,7 +123,7 @@ function sortExons(exons)
 function getInfoOfEachExon(exons)
 {
     var exonLengths = [];
-    exons = sortExons(exons);
+    //exons = sortExons(exons);
 
     exons.forEach(function(exon) {
         exonLengths.push({'key' : exon.id,  'value' : (exon.end - exon.start + 1) });
@@ -159,8 +159,11 @@ function searchForTranscript()
 
     transcript = transcriptsGlobal[transcript];
 
+    //console.log(transcript['Exon']);
 
-    var exons = sortExons(transcript['Exon']);
+    //var exons = sortExons(transcript['Exon']);
+    var exons = transcript['Exon'];
+
     var exonIds = {};
     exonIds['ids'] = [];
     exonIds['format'] = 'JSON';
@@ -233,7 +236,8 @@ function allTranscriptsInSelectedGene()
 
     for (i = xhr_number; i < transcriptsGlobal.length; i++)
     {
-        var exons = sortExons(transcriptsGlobal[i]['Exon']);
+        //var exons = sortExons(transcriptsGlobal[i]['Exon']);
+        var exons = transcriptsGlobal[i]['Exon'];
 
         var exonIds = {};
         exonIds['ids'] = [];
