@@ -148,7 +148,7 @@ function parseNCBIXML(data)
 
         var exonLengths = [];
 
-        var a, gbFeature, intervals, interval, interval_from, interval_to, accession;
+        var a, gbFeature, intervals, interval, interval_from, interval_to, accession, sequenceActual = '';
         for(a = 0; a < gbFeaturesXML.childElementCount; a++)
         {
             gbFeature = gbFeaturesXML.children[a];
@@ -164,11 +164,17 @@ function parseNCBIXML(data)
             interval_to     = interval.getElementsByTagName('GBInterval_to')[0].textContent;
             accession       = interval.getElementsByTagName('GBInterval_accession')[0].textContent;
 
+            interval_from   = parseInt(interval_from);
+            interval_to     = parseInt(interval_to);
+
+            sequenceActual += sequence.substring(interval_from, interval_to + 1);
+
             exonLengths.push({ 'key' : accession, 'value' : (interval_to - interval_from + 1) });
         }
 
         if(exonLengths.length === 0)
         {
+            //Find the gene value instead
             for(a = 0; a < gbFeaturesXML.childElementCount; a++)
             {
                 gbFeature = gbFeaturesXML.children[a];
@@ -185,9 +191,11 @@ function parseNCBIXML(data)
                     break;
                 }
             }
+
+            sequenceActual = sequence;
         }
 
-        addSV(name, sequence, exonLengths);
+        addSV(name, sequenceActual, exonLengths);
     }
 
 
