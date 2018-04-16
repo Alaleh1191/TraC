@@ -7,6 +7,8 @@ window.onload = (function() {
     $('input[name=db]').on('ifClicked', function() {
        DBDisplayChange($(this).val());
     });
+
+    assemblySelected();
 });
 
 function DBDisplayChange(showDiv)
