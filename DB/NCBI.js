@@ -167,7 +167,7 @@ function parseNCBIXML(data)
             interval_from   = parseInt(interval_from);
             interval_to     = parseInt(interval_to);
 
-            sequenceActual += sequence.substring(interval_from, interval_to + 1);
+            sequenceActual += sequence.substring(interval_from - 1, interval_to);
 
             exonLengths.push({ 'key' : accession, 'value' : (interval_to - interval_from + 1) });
         }

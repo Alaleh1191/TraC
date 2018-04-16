@@ -274,7 +274,7 @@ function TrackwShared(x,sv){
 						$(".shared").css("opacity","0.2")
 						$(this).css("opacity","1");
 						console.log(this)
-			            d3.select("#title").style('display', 'block').html('Shared Sequence:');
+			            d3.select("#title").style('display', 'block').html('Shared Sequence: highlight a section of shared sequence to see where it falls on each transcript');
 			            d3.select("#probe").style('display', 'block').html(this.id);
 						displayLocation(this.id);
 					});
@@ -530,3 +530,65 @@ function makeJsonData(combs, sharedSeqs){
 
 }
 
+// Highlighted Section
+function highlight()
+{
+    var textarea = document.getElementById("probe");
+    var start = textarea.selectionStart;
+    var finish = textarea.selectionEnd;
+
+    $(".highlightClass").remove();
+
+    if(start === finish)
+	{
+        return;
+	}
+
+
+    var selection = textarea.value.substring(start, finish);
+
+    name = selection;
+	var spliceVariants= $(".SV").map(function() {
+		return $(this).val();
+	}).get();
+
+	var longestSeq = spliceVariants.sort(function (a, b) { return b.length - a.length; })[0];
+
+	spliceVariants= $(".SV").map(function() {
+		return $(this).val();
+	}).get();
+
+	var xScale = d3.scaleLinear()//scaleLinear v4
+		.domain(
+			[0,longestSeq.length]
+		)
+		.range([0,580]);
+
+	var yloc = 10;
+	var found = false;
+	for(var i = 0; i < spliceVariants.length; i++){
+
+		console.log("Running");
+
+		if(spliceVariants[i].indexOf(name) != -1){// if transcript contains the desired probe
+			// for loop find all matches
+			found = true;
+			var indices = indexes(spliceVariants[i],name);
+			for(j = 0; j < indices.length; j++) {
+                d3.select("#svgT").append("rect")
+                    .attr("x", xScale(indices[j]))
+                    .attr("y", yloc + 5)// -5
+                    .attr("width", xScale(name.length))
+                    .attr("height", 7)//3
+                    .attr("class", "highlightClass")
+                    .style("opacity", 1)//1
+                    .style("pointer-events", "none")
+                    .attr("fill", "yellow");//rgb(228, 75, 75)
+            }
+
+
+		}
+		yloc += 30;
+	}
+
+}
